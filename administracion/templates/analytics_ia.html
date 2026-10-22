@@ -1,0 +1,58 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+
+{% block title %}Analytics con IA{% endblock %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'analytics.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>🧠 Analytics con Inteligencia Artificial</h1>
+    
+    <div class="dashboard">
+        <!-- Métricas Principales -->
+        <div class="metricas-grid">
+            <div class="metrica-card">
+                <h3>📊 Preguntas este Mes</h3>
+                <p class="numero">{{ analytics_data.total_preguntas_mes }}</p>
+            </div>
+            <div class="metrica-card">
+                <h3>⏱️ Preguntas sin Respuesta</h3>
+                <p class="numero">{{ analytics_data.preguntas_sin_respuesta }}</p>
+            </div>
+            <div class="metrica-card">
+                <h3>⚡ Tiempo Promedio Respuesta</h3>
+                <p class="numero">{{ analytics_data.tiempo_promedio_respuesta }}</p>
+            </div>
+        </div>
+
+        <!-- Tendencias por Categoría -->
+        <div class="categorias-section">
+            <h3>🎯 Tendencias por Categoría (IA)</h3>
+            <div class="categorias-grid">
+                {% for categoria, cantidad in analytics_data.categorias_tendencia.items %}
+                <div class="categoria-card">
+                    <span class="categoria-nombre">{{ categoria|title }}</span>
+                    <span class="categoria-cantidad">{{ cantidad }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Usuarios Más Activos -->
+        <div class="usuarios-section">
+            <h3>👥 Usuarios Más Activos</h3>
+            <div class="usuarios-list">
+                {% for usuario in analytics_data.usuarios_activos %}
+                <div class="usuario-card">
+                    <span>{{ usuario.usuario }}</span>
+                    <span class="preguntas-count">{{ usuario.num_preguntas }} preguntas</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

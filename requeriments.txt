@@ -1,0 +1,4 @@
+mysqlclient>=2.1.1
+django>=4.1
+django-environ>=0.4.5
+openai>=1.0.0,<2.0.0

@@ -1,0 +1,76 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+{% block links%}
+<link rel="stylesheet" href="{% static 'gestion.css' %}">
+{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %} Gestion de usuarios {% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+    {% block content %}
+        {% if user.admin == False%}
+            {% if user.tecnico == True %}
+                <script>window.location.href = '/Administracion/';</script>
+            {% endif %}
+            <script>window.location.href = '/Inicio/{{ user.id }}';</script>
+        {% endif %}
+        <h1 id="Titulo">Gestion de Usuarios</h1>
+        <div class="Container">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Correo</th>
+                    <th scope="col">Rut</th>
+                    <th scope="col">Activo</th>
+                    <th scope="col">Admin</th>
+                    <th scope="col">Tecnico</th>
+                    <th scope="col">Ultima Conexión</th>
+                    <th scope="col"></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for Usuario in Usuarios %}
+                    <tr>
+                        <th scope="row">{{ Usuario.id }}</th>
+                        <td>
+                            {{ Usuario.usuario }}
+                            <form id="user-change-{{ Usuario.id }}" method="post" action="{% url 'gestion_usuarios' %}">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ Usuario.id }}" name="Userid">
+                            </form>
+                        </td>
+                        <td>{{ Usuario.correo }}</td>
+                        <td>{{ Usuario.rut }}</td>
+                        <td><label class="visually-hidden" for="activo-{{ Usuario.id }}">Cuenta activa</label><input id="activo-{{ Usuario.id }}" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %}/></td>
+                        <td><label class="visually-hidden" for="admin-{{ Usuario.id }}">Administrador</label><input id="admin-{{ Usuario.id }}" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %}/></td>
+                        <td><label class="visually-hidden" for="tecnico-{{ Usuario.id }}">Técnico</label><input id="tecnico-{{ Usuario.id }}" type="checkbox" name="tecnico" form="user-change-{{ Usuario.id }}" {% if Usuario.tecnico %}checked{% endif %}/></td>
+                        <td>{{ Usuario.last_login }}</td>
+                        <td>
+                            <button id="btnModif" type="submit" form="user-change-{{ Usuario.id }}"><i class="fa-solid fa-pen"></i></button>
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'eliminar_usuario' Usuario.id %}" onsubmit="return confirm('¿Estas seguro de borrar este usuario?')">
+                                {% csrf_token %}
+                                <button type="submit"><i class="fa-regular fa-trash-can"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="10" class="users-empty">No hay usuarios para mostrar.</td></tr>
+                {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    {% endblock %}
+{% endif%}
+</body>
+</html>

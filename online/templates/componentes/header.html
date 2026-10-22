@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'estiloHeader.css' %}?v=20261011-footer">
+    <title>{% block title %}Call Center Gamer{% endblock %}</title>
+    {% block links %}{% endblock %}
+</head>
+<body>
+    <nav class="MainNav">
+        <div id="NavbarIzq">
+            <a href="{% if user.is_authenticated %}{% if user.admin or user.tecnico %}/Administracion/{% else %}/Inicio/{{ user.id }}/{% endif %}{% else %}/{% endif %}" id="logo">
+                <i class="fas fa-gamepad"></i> CallCenterGamer
+            </a>
+            <ul>
+                {% if user.is_authenticated %}
+                    {% if user.admin or user.tecnico %}
+                        <li><a href="/Administracion/">Administración</a></li>
+                        {% if user.admin %}<li><a href="{% url 'analytics_ia' %}">Analytics IA</a></li>{% endif %}
+                        {% if user.admin %}<li><a href="/GestionUsuarios/">Gestión de Usuarios</a></li>{% endif %}
+                    {% else %}
+                        <li><a href="/Inicio/{{ user.id }}/">Inicio</a></li>
+                    {% endif %}
+                {% else %}
+                    <li><a href="/">Inicio</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div id="NavbarDer">
+            <ul>
+                {% if user.is_authenticated %}
+                    <li>
+                        <span style="color: white; margin-right: 15px;">
+                            <i class="fas fa-user"></i> {{ user.usuario }}
+                            {% if user.admin %}
+                                <span style="background: #ff6b6b; padding: 2px 5px; border-radius: 3px; font-size: 0.8em; margin-left: 5px;">Admin</span>
+                            {% elif user.tecnico %}
+                                <span style="background: #4ecdc4; padding: 2px 5px; border-radius: 3px; font-size: 0.8em; margin-left: 5px;">Técnico</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    <li>
+                        <form method="post" action="{% url 'Logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li><a href="/Login/"><i class="fas fa-sign-in-alt"></i> Ingresar</a></li>
+                    <li><a href="/Register/"><i class="fas fa-user-plus"></i> Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <section class="footer-section">
+                <h2>Contacto</h2>
+                <p>Instagram</p>
+                <p>Facebook</p>
+            </section>
+            <section class="footer-section">
+                <h2>Ubicación</h2>
+                <p>Av. Américo Vespucio 974, Maipú, Región Metropolitana</p>
+            </section>
+            <p class="footer-copyright">© 2026-2030 Call Center Gamer. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    {% block js %}{% endblock %}
+
+    <style>
+        .logout-form { display: inline; margin: 0; padding: 0; }
+        .logout-btn {
+            background: none; border: none; color: white; cursor: pointer;
+            padding: 8px 12px; border-radius: 4px; transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif; font-size: 14px;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .logout-btn:hover { background-color: rgba(255, 255, 255, 0.1); color: #ff6b6b; }
+        #NavbarDer ul { display: flex; align-items: center; gap: 10px; }
+        #NavbarDer ul li { display: flex; align-items: center; }
+    </style>
+</body>
+</html>

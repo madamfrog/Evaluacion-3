@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Center Gamer - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #1a1a1a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            padding: 40px;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #4E31E1;
+        }
+        .user-info {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .btn {
+            background: #4E31E1;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #673de6;
+            transform: scale(1.05);
+        }
+        .btn-logout {
+            background: #ff6b6b;
+        }
+        .debug {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Call Center Gamer</h1>
+        <p>Sistema de Soporte Técnico - <strong>PÁGINA HOME</strong></p>
+        
+        <div class="debug">
+            <strong>DEBUG INFO:</strong><br>
+            Usuario autenticado: {{ user.is_authenticated }}<br>
+            Usuario: {{ user.usuario }}<br>
+            Admin: {{ user.admin }}<br>
+            ID: {{ user.id }}
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="user-info">
+            <h2>¡Hola, {{ user.usuario }}! 👋</h2>
+            <p>Estás en la página HOME - Sin redirecciones automáticas</p>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn" onclick="window.location.href='/Administracion/'">
+                    🛠️ Ir a Administración
+                </button>
+                <button class="btn" onclick="window.location.href='/Inicio/{{ user.id }}/'">
+                    🏠 Ir a Mi Panel
+                </button>
+                <form method="post" action="{% url 'Logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button class="btn btn-logout" type="submit">🚪 Cerrar Sesión</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="user-info">
+            <h2>Bienvenido Visitante</h2>
+            <p>Esta es la página HOME - Sin redirecciones automáticas</p>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn" onclick="window.location.href='/Login/'">
+                    🔑 Iniciar Sesión
+                </button>
+                <button class="btn" onclick="window.location.href='/Register/'">
+                    📝 Registrarse
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
+        <div style="margin-top: 30px;">
+            <h3>✅ Esta página NO tiene redirecciones automáticas</h3>
+            <p>El loop debería estar solucionado ahora</p>
+        </div>
+    </div>
+
+    <script>
+        console.log("✅ Página HOME cargada - Sin redirecciones automáticas");
+        
+        // Script simple para botones
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const onclick = this.getAttribute('onclick');
+                if (onclick) {
+                    const url = onclick.split("'")[1];
+                    console.log("Navegando a:", url);
+                    window.location.href = url;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

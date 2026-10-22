@@ -1,0 +1,78 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+{% block links%}
+<link rel="stylesheet" href="{% static 'respuestas.css' %}">
+{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %} Respuestas {% endblock %}
+</head>
+{% block content %}
+
+<body>
+    <div class="MainRespuestas" id="FondoColores">
+        <div class="divRespuestas">
+            {% for Respuesta in Respuestas %}
+            {% if Respuesta.Usuario.id == user.id %}
+            <div class="dRespuestas">
+                <p>{{ Respuesta.Respuesta }}</p>
+                <div class="dHora"><h4>{{ Respuesta.FechaHora.time }}</h4></div>
+            </div>
+            {% else %}
+            <div class="dRespuestasOtro">
+                <h1>{{Respuesta.Usuario}}</h1>
+                <p>{{ Respuesta.Respuesta }}</p>
+                <div class="dHora"><h4>{{ Respuesta.FechaHora.time }}</h4></div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <form method="post">
+            <div class="TextArea">
+                {{form}}
+                <button id="btnSend" type="submit"><i class="fa-solid fa-paper-plane fa-xl"></i></button>
+            </div>
+            {% csrf_token %}
+        </form>
+    </div>
+    <div class="dDerecha">
+        <div class="divPregunta">
+            <h2 id="Titulopreg">Información</h2>
+            <hr>
+            <h2>Titulo: <a>{{Pregunta.Titulo}}</a></h2>
+            <h2>Usuario: <a>{{Pregunta.Usuario}}</a></h2>
+            <h2>Pregunta: <a>{{Pregunta.Pregunta}}</a></h2>
+        </div>
+        <div class="divFondo"></div>
+        <div class="CambiarFondo">
+            <h2>Cambiar fondo de chat</h2>
+            <div id="btnFondo">
+                <button id="Rojo" onclick="cambiarColor('red')"></button>
+                <button id="Gris" onclick="cambiarColor('#323232')"></button>
+                <button id="Rosita" onclick="cambiarColor('#C4BAF5')"></button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    document.getElementById('id_Respuesta').onkeydown = function (e) {
+        if(e.key == "Enter"){
+            document.getElementById('btnSend').click()
+        }
+    }
+</script>
+<script src="https://kit.fontawesome.com/c1366bcc7f.js" crossorigin="anonymous"></script>
+<script>
+    function cambiarColor(NuevoColor){
+        const elem = document.getElementById('FondoColores');
+        elem.style.backgroundColor = NuevoColor;
+    }
+</script>
+{% endblock %}
+
+</html>

@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
+
+
+.MainRespuestas {
+    background-image: url('./img/bg-chat-tile-dark_a4be512e7195b6b733d9110b408f075d.png');
+    background-color: rgb(240, 242, 245);
+    border-radius: 5px;
+    margin-top: 20px;
+    width: 1280px;
+    height: 700px;
+    border: 1px solid rgb(52, 32, 150);
+    box-shadow: 0px 0px 5px 2px rgba(78, 49, 225, 0.5);
+    position: relative;
+    margin-left: 50px;
+    float: left;
+}
+
+#Rojo{
+    background-color: red;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#Gris{
+    background-color: #323232;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#Rosita{
+    background-color: #C4BAF5;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+#Titulopreg {
+    text-align: center;
+    font-size: 25px;
+    font-family: "DM Sans", sans-serif;
+    color: rgb(52, 32, 150);
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.divPregunta h2{
+    font-family: "DM Sans", sans-serif;
+    color: rgb(52, 32, 150);
+    font-size: 18px;
+    margin-left: 15px;
+}
+
+.divPregunta a{
+    color: black;
+    font-weight: 200;
+    font-size: 18px;
+}
+
+.divFondo{
+    width: 500px;
+    height: 250px;
+    border-radius: 5px;
+    border: 1px solid rgb(52, 32, 150);
+    font-family: "DM Sans", sans-serif;
+    box-shadow: 0px 0px 5px 2px rgba(78, 49, 225, 0.5);
+    margin-top: 25px;
+    background-image: url('./img/cuidadosgatobebe_2-focus-min0.07-0.45-640-384.jpg');
+}
+
+.dDerecha{
+    float: right;
+    width: 500px;
+    height: 800px;
+    margin-right: 50px;
+    margin-top: 20px;
+}
+
+.CambiarFondo{
+    width: 500px;
+    height: 150px;
+    border-radius: 5px;
+    border: 1px solid rgb(52, 32, 150);
+    font-family: "DM Sans", sans-serif;
+    box-shadow: 0px 0px 5px 2px rgba(78, 49, 225, 0.5);
+    margin-top: 25px;
+}
+
+.CambiarFondo h2{
+    margin-top: 10px;
+    text-align: center;
+    display: block;
+}
+
+#btnFondo{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content:center ;
+    align-items: center;
+    margin: 25px auto;
+}
+
+
+#btnFondo button{
+    width: 45px;
+    height: 45px;
+    margin-left: 15px;
+}
+
+.divPregunta{
+    width: 500px;
+    height: auto;
+    padding-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid rgb(52, 32, 150);
+    font-family: "DM Sans", sans-serif;
+    box-shadow: 0px 0px 5px 2px rgba(78, 49, 225, 0.5);
+}
+
+.MainRespuestas textarea {
+    resize: none;
+    width: 90%;
+    border-radius: 10px;
+    padding-left: 15px;
+    height: 35px;
+    outline: none;
+    border: none;
+    background-color: rgb(255, 255, 255);
+    margin-left: 50px;
+    font-family: "DM Sans", sans-serif;
+    font-size: 15px;
+    padding-top: 15px;
+    max-height: 60px;
+}
+
+.divRespuestas {
+    width: 100%;
+    height: 90%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 15px;
+}
+
+.TextArea {
+    width: auto;
+    height: 65px;
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+    background-color: rgb(241, 241, 241);
+    border-top: 1.5px solid rgba(160, 161, 163, 0.5);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+
+#btnSend {
+    border: none;
+    margin-left: 5px;
+    color: rgb(123, 139, 148);
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.3s all ease-in-out;
+}
+
+#btnSend:hover{
+    color: rgb(47, 50, 51);
+}
+
+.dRespuestas {
+    max-width: 500px;
+    height: auto;
+    margin-top: 10px;
+    margin-left: 750px;
+    border-radius: 15px;
+    color: white;
+    border: none;
+    box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.5);
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    background-color: rgb(52, 32, 150);
+    display: flex;
+    flex-direction: column;
+    overflow-wrap: break-word;
+}
+
+.dRespuestas h1 {
+    font-family: "DM Sans", sans-serif;
+    font-size: 18px;
+    color: white;
+    width: 120px;
+}
+
+.dRespuestas p {
+    font-size: 15px;
+    font-family: "DM Sans", sans-serif;
+}
+
+.dRespuestas h4{
+    display: inline;
+    float: right;
+    font-family: "DM Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 100;
+}
+
+.dRespuestasOtro {
+    overflow: hidden;
+    overflow-wrap: break-word;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    margin-top: 10px;
+    margin-left: 15px;
+    border-radius: 15px;
+    color: black;
+    border: none;
+    box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.5);
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    background-color: rgb(240, 242, 245);
+    overflow-wrap: break-word;
+}
+
+.dRespuestasOtro h1 {
+    font-family: "DM Sans", sans-serif;
+    font-size: 18px;
+    color: rgb(52, 32, 150);
+    width: auto;
+}
+
+.dRespuestasOtro p {
+    font-size: 14px;
+    font-family: "DM Sans", sans-serif;
+}
+
+.dRespuestasOtro h4{
+    display: inline;
+    float: right;
+    font-family: "DM Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 100;
+}
+
+.dHora{
+    float: right;
+}
+
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

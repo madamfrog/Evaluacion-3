@@ -1,0 +1,117 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+{% block links%}
+<link rel="stylesheet" href="{% static 'inicio.css' %}">
+{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %} Inicio {% endblock %}
+</head>
+
+<body>
+    {% block content %}
+    {% if user.id == id and user.admin == False and user.tecnico == False %}
+    <div class="MainTodo">
+        <div class="MainPreguntar">
+            <div class="InsPreguntas">
+                <form method="post">
+                    {{form}}
+                    {% csrf_token %}
+                    <input type="submit" value="Insertar pregunta">
+                </form>
+            </div>
+
+            <div class="asistente-ia" style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white;">
+                <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-robot"></i> Asistente Virtual IA
+                </h3>
+                <form method="get" action="" style="margin-bottom: 15px;">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="buscar_ayuda" placeholder="¿En qué puedo ayudarte? Ej: problema con internet, juego lento..."
+                               value="{{ request.GET.buscar_ayuda|default:'' }}"
+                               style="flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px;">
+                        <button type="submit" style="padding: 12px 20px; background: #4E31E1; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+                <p style="font-size: 0.9em; opacity: 0.9; margin-bottom: 15px;">
+                    Nuestra IA puede ayudarte con problemas de hardware, software, conexión y más.
+                </p>
+            </div>
+
+            {% if sugerencias_ia %}
+            <div class="resultados-ia" style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #4E31E1;">
+                <h4 style="color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-lightbulb"></i> Sugerencias para: "{{ sugerencias_ia.consulta_original }}"
+                </h4>
+                <div class="respuesta-ia" style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-robot" style="color: #4E31E1;"></i>
+                        <strong style="color: #333;">Respuesta Automática:</strong>
+                    </div>
+                    <div style="white-space: pre-line; line-height: 1.5; color: #555;">
+                        {{ sugerencias_ia.respuesta_automatica }}
+                    </div>
+                </div>
+                {% if sugerencias_ia.recomendaciones %}
+                <div class="recomendaciones-ia" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                        <i class="fas fa-star" style="color: #ffc107;"></i>
+                        <strong style="color: #333;">Preguntas Similares Resueltas:</strong>
+                    </div>
+                    {% for rec in sugerencias_ia.recomendaciones %}
+                    <div style="margin: 12px 0; padding: 12px; border-left: 3px solid #4E31E1; background: #f8f9fa; border-radius: 0 8px 8px 0;">
+                        <div style="display: flex; justify-content: between; align-items: start; gap: 10px; margin-bottom: 8px;">
+                            <strong style="color: #333; flex: 1;">{{ rec.pregunta_similar }}</strong>
+                            <span style="background: #4E31E1; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Similitud: {{ rec.similitud }}</span>
+                        </div>
+                        <p style="color: #666; margin: 0; font-size: 0.9em; line-height: 1.4;">{{ rec.respuesta }}</p>
+                        {% if rec.categoria %}
+                        <div style="margin-top: 8px;"><span style="background: #e9ecef; color: #495057; padding: 2px 6px; border-radius: 8px; font-size: 0.8em;">{{ rec.categoria }}</span></div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 20px; color: #666;">
+                    <i class="fas fa-info-circle" style="font-size: 2em; margin-bottom: 10px; opacity: 0.5;"></i>
+                    <p>No se encontraron preguntas similares en nuestra base de datos.</p>
+                </div>
+                {% endif %}
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="?buscar_ayuda={{ sugerencias_ia.consulta_original|urlencode }}#formulario-pregunta"
+                       style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #4E31E1; color: white; text-decoration: none; border-radius: 6px; font-size: 0.9em;">
+                        <i class="fas fa-question-circle"></i> Crear pregunta sobre este tema
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="MainPreguntas">
+            <div id="Titulo"><h2>Historial de tus preguntas</h2></div>
+            {% for pregunta in Preguntas %}
+            <div class="Preguntas">
+                <a href="/Respuesta/{{ user.id }}/{{pregunta.idPregunta}}">
+                    <h1>Titulo: {{pregunta.Titulo}}</h1>
+                    <h4>{{pregunta.Fecha_creacion}}</h4>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    {% if user.admin or user.tecnico %}
+    <script>window.location.href = '/Administracion/';</script>
+    {% endif %}
+    <script>window.location.href = '/Inicio/{{ user.id }}';</script>
+    {% endif %}
+    {% endblock %}
+</body>
+</html>

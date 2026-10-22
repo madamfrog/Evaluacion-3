@@ -1,0 +1,40 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+{% block links%}
+<link rel="stylesheet" href="{% static 'modificar.css' %}">
+{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %} Modificar {% endblock %}
+</head>
+
+<body>
+    {% block content %}
+    {% if user.admin == False%}
+    {% if user.tecnico == True %}
+    <script>window.location.href = '/Administracion/';</script>
+    {% endif%}
+    <script>window.location.href = '/Inicio/{{ user.id }}';</script>
+    {% else %}
+    <h1 id="TituloMod">Modificar pregunta</h1>
+    <div class="MainTodo">
+        <div class="MainPreguntar">
+            <div class="InsPreguntas">
+                <form method="post">
+                    {{form}}
+                    {% csrf_token %}
+                    <input type="submit" value="Modificar pregunta">
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endblock %}
+</body>
+
+</html>

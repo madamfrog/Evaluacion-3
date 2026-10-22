@@ -1,0 +1,30 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+{% block links%}
+<link rel="stylesheet" href="{% static 'register.css' %}">
+{% endblock %}
+{% block title %} asdas {% endblock %}
+
+{% block content %}
+<div class="MainRegister">
+    {% if user.is_authenticated %}
+    <script>window.location.href = '/Inicio/';</script>
+    {% else %}
+    <h2>Registrarse</h2>
+    <form id="Formulario" method="POST">
+        {{form}}
+        {% csrf_token %}
+        <input value="Registrarse" type="submit">
+    </form>
+    <p>¿Ya tienes cuenta? <a href="/Login/">Ingresa ya!</a></p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block js %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/css/inputmask.min.css" rel="stylesheet"/>
+    <script src="{% static 'Register.js' %}"></script>
+{% endblock js %}

@@ -1,0 +1,86 @@
+.Container {
+    margin: 0 auto;
+    max-width: 1200px;
+    margin-top: 25px;
+}
+
+#Titulo {
+    font-family: 'Heebo', sans-serif;
+    color: rgb(52, 32, 150);
+    text-align: center;
+}
+
+
+#btnModif{
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: #4E31E1;
+}
+
+table {
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    font-family: 'Heebo', sans-serif;
+    box-shadow: 0px 0px 5px 2px rgba(78, 49, 225, 0.7);
+}
+
+table * {
+    position: relative;
+}
+
+table td,
+table th {
+    padding-left: 8px;
+}
+
+table thead tr {
+    height: 60px;
+    background: #4E31E1;
+    font-size: 16px;
+    color: white;
+}
+
+table tbody tr {
+    height: 48px;
+    border-bottom: 1px solid rgb(52, 32, 150);
+}
+
+table tbody tr:last-child {
+    border: none;
+}
+
+table td,
+table th {
+    text-align: left;
+}
+
+table td.l,
+table th.l {
+    text-align: right;
+}
+
+table td.c,
+table th.c {
+    text-align: center;
+}
+
+table td.r,
+table th.r {
+    text-align: center;
+}
+blockquote {
+    color: white;
+    text-align: center;
+}
+
+#ModifTable th a{
+    text-decoration: none;
+    color: #4E31E1;
+}

@@ -1,0 +1,36 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+{% block links%}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block title %} Login {% endblock %}
+</head>
+
+<body>
+    {% block content %}
+    <div class="mainLogin">
+        {% if user.is_authenticated %}
+        <script>window.location.href = '/Inicio/{{ user.id }}';</script>
+        {% else %}
+        <h2>Iniciar sesión</h2>
+        <form id="Formulario" method="POST">
+            {{form}}
+            {% csrf_token %}
+            <input value="Iniciar Sesion" type="submit">
+        </form>
+        <p>¿Aun no tienes cuenta? <a href="/Register/">Registrate ya!</a></p>
+        {% endif %}
+    </div>
+    {% endblock %}
+
+</body>
+
+</html>
