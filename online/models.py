@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db.models import Manager
+
 
 class UserManager(BaseUserManager):
     def create_user(self, correo, usuario, password=None, **extra_fields):
@@ -7,14 +9,12 @@ class UserManager(BaseUserManager):
         Crea y guarda un usuario con el correo, usuario y password dados.
         """
         if not correo:
-            raise ValueError('El usuario debe tener un correo electrónico')
+            raise ValueError("El usuario debe tener un correo electrónico")
         if not usuario:
-            raise ValueError('El usuario debe tener un nombre de usuario')
+            raise ValueError("El usuario debe tener un nombre de usuario")
 
         user = self.model(
-            correo=self.normalize_email(correo),
-            usuario=usuario,
-            **extra_fields
+            correo=self.normalize_email(correo), usuario=usuario, **extra_fields
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -24,56 +24,45 @@ class UserManager(BaseUserManager):
         """
         Crea y guarda un superusuario con el correo, usuario y password dados.
         """
-        extra_fields.setdefault('admin', True)
-        extra_fields.setdefault('activo', True)
-        extra_fields.setdefault('tecnico', True)
+        extra_fields.setdefault("admin", True)
+        extra_fields.setdefault("activo", True)
+        extra_fields.setdefault("tecnico", True)
 
-        if extra_fields.get('admin') is not True:
-            raise ValueError('Superuser debe tener admin=True.')
+        if extra_fields.get("admin") is not True:
+            raise ValueError("Superuser debe tener admin=True.")
 
         return self.create_user(correo, usuario, password, **extra_fields)
 
+
 class Usuario(AbstractBaseUser):
     nombre = models.CharField(
-        verbose_name='Nombre',
-        max_length=30,
-        blank=True,
-        null=True
+        verbose_name="Nombre", max_length=30, blank=True, null=True
     )
     apellido = models.CharField(
-        verbose_name='Apellido',
-        max_length=30,
-        blank=True,
-        null=True
+        verbose_name="Apellido", max_length=30, blank=True, null=True
     )
     rut = models.CharField(
-        verbose_name='RUT',
-        max_length=12,
-        unique=True,
-        blank=True,
-        null=True
+        verbose_name="RUT", max_length=12, unique=True, blank=True, null=True
     )
     correo = models.EmailField(
-        verbose_name='Correo electrónico',
+        verbose_name="Correo electrónico",
         max_length=70,
         unique=True,
     )
     usuario = models.CharField(
-        verbose_name='Usuario',
+        verbose_name="Usuario",
         max_length=50,
         unique=True,
     )
     fecha_nacimiento = models.DateField(
-        verbose_name='Fecha de nacimiento',
-        null=True,
-        blank=True
+        verbose_name="Fecha de nacimiento", null=True, blank=True
     )
     activo = models.BooleanField(default=True)
     admin = models.BooleanField(default=False)
     tecnico = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'usuario'
-    REQUIRED_FIELDS = ['correo']
+    USERNAME_FIELD = "usuario"
+    REQUIRED_FIELDS = ["correo"]
 
     objects = UserManager()
 
@@ -104,6 +93,7 @@ class Usuario(AbstractBaseUser):
     def __str__(self):
         return self.usuario
 
+
 class Preguntas(models.Model):
     idPregunta = models.AutoField(primary_key=True)
     Titulo = models.CharField(max_length=60)
@@ -114,9 +104,10 @@ class Preguntas(models.Model):
     def __str__(self):
         return f"{self.idPregunta} - {self.Titulo}"
 
+
 class Respuesta(models.Model):
     idRespuesta = models.AutoField(primary_key=True)
-    Respuesta = models.TextField(verbose_name='Respuesta')
+    Respuesta = models.TextField(verbose_name="Respuesta")
     id_Pregunta = models.ForeignKey(Preguntas, on_delete=models.CASCADE)
     Usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     FechaHora = models.DateTimeField()

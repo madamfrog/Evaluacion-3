@@ -9,13 +9,14 @@
 </head>
 <body>
     {% block content %}
+    <!--
+        FELIPE: No es necesario, ya que, se redirecciona en las views
     {% if user.is_authenticated %}
-        {% if user.admin or user.tecnico %}
-        <script>window.location.href = '/Administracion/';</script>
-        {% else %}
+        {% if not user.admin and not user.tecnico %}
         <script>window.location.href = '/Inicio/{{ user.id }}/';</script>
         {% endif %}
     {% endif %}
+    -->
 
     <div class="Banner">
         <div class="contLeft"></div>
