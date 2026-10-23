@@ -2,11 +2,18 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Call Center Gamer - Inicio{% endblock %}</title>
+
+
+    {% block links%}
+    <link rel="stylesheet" href="{% static 'gestion.css' %}">
+    {% endblock %}
 </head>
+
 <body>
     {% block content %}
     <!--
@@ -18,6 +25,8 @@
     {% endif %}
     -->
 
+    <!--
+        FELIPE: No es necesario, ya que, el usuario si o si está autentificado
     <div class="Banner">
         <div class="contLeft"></div>
         <div class="contRight">
@@ -44,7 +53,60 @@
             <button id="btnIngresar" onclick="window.location.href = '/Login/'">Ingresar</button>
         </div>
     </div>
+    -->
+
+    <!-- FELIPE: AGREGUE ESTA TABLA PARA LA GESTION DE PREGUNTAS -->
+
+    <h1 id="Titulo">Gestion de Preguntas</h1>
+    <div class="Container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Titulo</th>
+                    <th scope="col">Pregunta</th>
+                    <th scope="col">Fecha Creación</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col"></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in Preguntas %}
+                <tr>
+                    <th scope="row">{{ item.idPregunta }}</th>
+                    <td>
+                        {{ item.Titulo }}
+                        <form id="user-change-{{ Usuario.id }}" method="post"
+                            action="{% url 'modificar_pregunta' item.idPregunta %}">
+                            {% csrf_token %}
+                        </form>
+                    </td>
+                    <td>{{ item.Pregunta }}</td>
+                    <td>{{ item.Fecha_creacion }}</td>
+                    <td>{{ item.Usuario }}</td>
+                    <td>
+                        <button id="btnModif" type="submit" form="user-change-{{ Usuario.id }}"><i
+                                class="fa-solid fa-pen"></i></button>
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'borrar_pregunta' item.idPregunta %}"
+                            onsubmit="return confirm('¿Estas seguro de borrar esta Pregunta?')">
+                            {% csrf_token %}
+                            <button type="submit"><i class="fa-regular fa-trash-can"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="users-empty">No hay preguntas para mostrar.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     {% endblock %}
 </body>
+
 </html>

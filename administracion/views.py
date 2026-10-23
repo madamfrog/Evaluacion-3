@@ -1,6 +1,7 @@
 import json
 from datetime import timedelta
 from typing import Any
+from wsgiref.util import request_uri
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -32,7 +33,9 @@ def IndexAdmin(request: HttpRequest) -> HttpResponse:
         usuario_id: Any | None = usuario.pk
         return redirect(f"/Inicio/{usuario_id}")
 
-    ListaPreguntas = Preguntas.objects.all().order_by("-Fecha_creacion")
+    ListaPreguntas: QuerySet[Preguntas] = Preguntas.objects.all().order_by(
+        "-Fecha_creacion"
+    )
     tendencias_ia = []
     estadisticas_ia = {}
     alertas_ia = []
@@ -106,7 +109,7 @@ def IndexAdmin(request: HttpRequest) -> HttpResponse:
 
 @login_required
 @require_POST
-def BorrarPregunta(request: HttpRequest, idUser: int, idPregunta: int) -> HttpResponse:
+def BorrarPregunta(request: HttpRequest, idPregunta: int) -> HttpResponse:
     """
     Vista para borrar preguntas con verificación de IA
     """
@@ -129,6 +132,117 @@ def BorrarPregunta(request: HttpRequest, idUser: int, idPregunta: int) -> HttpRe
     pregunta.delete()
 
     return redirect("/Administracion/")
+
+
+@login_required
+def ModificarPregunta(request: HttpRequest, idPregunta: int) -> HttpResponse:
+    """
+    Vista para modificar preguntas con asistencia de IA
+    """
+
+    usuario: object = request.user
+    assert isinstance(usuario, Usuario)
+
+    es_admin: int = usuario.admin
+
+    if not es_admin:
+        usuario_id: Any | None = usuario.pk
+        return redirect(f"/Inicio/{usuario_id}")
+
+    Pregunta = get_object_or_404(Preguntas, idPregunta=idPregunta)
+    sugerencias_ia: list[Any] = []
+
+    # 🔥 INTEGRACIÓN DE IA: Análisis de la pregunta y sugerencias
+    # try:
+    #     asistente_ia = AsistenteIA()
+    #     recomendador_ia = RecomendadorIA()
+
+    #     # 1. Clasificar la pregunta
+    #     categoria_ia = asistente_ia.clasificar_pregunta(Pregunta.Pregunta)
+
+    #     # 2. Generar sugerencias de mejora
+    #     sugerencia_prompt = f"""
+    #     Como experto en soporte técnico, analiza esta pregunta y sugiere mejoras:
+
+    #     Título actual: {Pregunta.Titulo}
+    #     Pregunta actual: {Pregunta.Pregunta}
+    #     Categoría detectada: {categoria_ia}
+
+    #     Sugiere:
+    #     1. Un título más descriptivo
+    #     2. Cómo mejorar la claridad de la pregunta
+    #     3. Información adicional que sería útil
+
+    #     Responde en formato JSON.
+    #     """
+
+    #     try:
+    #         respuesta_ia = asistente_ia.generar_respuesta_automatica(sugerencia_prompt)
+    #         # Intentar parsear como JSON, si falla usar texto plano
+    #         if "{" in respuesta_ia and "}" in respuesta_ia:
+    #             sugerencias_ia = json.loads(respuesta_ia)
+    #         else:
+    #             sugerencias_ia = [{"sugerencia": respuesta_ia}]
+    #     except:
+    #         sugerencias_ia = [
+    #             {"sugerencia": "No se pudieron generar sugerencias en este momento."}
+    #         ]
+
+    #     # 3. Buscar preguntas similares para referencia
+    #     preguntas_similares = recomendador_ia.recomendar_respuestas_similares(
+    #         Pregunta.Pregunta
+    #     )
+
+    # except Exception as e:
+    #     print(f"Error en análisis IA de pregunta: {e}")
+    #     sugerencias_ia = [{"error": "El asistente de IA no está disponible"}]
+
+    form: PreguntasForm = PreguntasForm(instance=Pregunta)
+
+    if request.method == "POST":
+        response_post: dict[Any, Any] = request.POST.dict()
+
+        # FELIPE: CAMBIE LA LOGICA PARA AGREGAR USUARIO Y FECHA DE CREACION (POR DEFECTO EN EL POST ERA '' Y DABA INVALIDO EN IS_VALID)
+        response_post.update(
+            {"Usuario": Pregunta.Usuario, "Fecha_creacion": Pregunta.Fecha_creacion}
+        )
+
+        form = PreguntasForm(response_post, instance=Pregunta)
+
+        if form.is_valid():
+            pregunta_actualizada = form.save(commit=False)
+
+            # 🔥 INTEGRACIÓN DE IA: Re-clasificar después de modificación
+            try:
+                nueva_categoria = asistente_ia.clasificar_pregunta(
+                    pregunta_actualizada.Pregunta
+                )
+                # Aquí podrías guardar la categoría si agregas el campo al modelo
+                print(f"Pregunta modificada - Nueva categoría IA: {nueva_categoria}")
+            except Exception as e:
+                print(f"Error en re-clasificación IA: {e}")
+
+            pregunta_actualizada.save()
+            messages.success(request, "Pregunta modificada correctamente.")
+            return redirect("/Administracion/")
+        else:
+            messages.error(request, "Error en el formulario. Verifica los datos.")
+
+    return render(
+        request,
+        "ModificarPregunta.html",
+        {
+            "form": form,
+            "pregunta": Pregunta,
+            "sugerencias_ia": sugerencias_ia,
+            "categoria_ia": categoria_ia
+            if "categoria_ia" in locals()
+            else "No disponible",
+            "preguntas_similares": preguntas_similares
+            if "preguntas_similares" in locals()
+            else [],
+        },
+    )
 
 
 @login_required
@@ -263,112 +377,6 @@ def EliminarUsuario(request: HttpRequest, idUser: int) -> HttpResponse:
         messages.error(request, "No tienes permisos para realizar esta acción.")
 
     return redirect("/GestionUsuarios/")
-
-
-@login_required
-def ModificarPregunta(request: HttpRequest, idPregunta: int) -> HttpResponse:
-    """
-    Vista para modificar preguntas con asistencia de IA
-    """
-
-    usuario: object = request.user
-    assert isinstance(usuario, Usuario)
-
-    es_admin: int = usuario.admin
-
-    if not es_admin:
-        usuario_id: Any | None = usuario.pk
-        return redirect(f"/Inicio/{usuario_id}")
-
-    Pregunta = get_object_or_404(Preguntas, idPregunta=idPregunta)
-    sugerencias_ia: list[Any] = []
-
-    # 🔥 INTEGRACIÓN DE IA: Análisis de la pregunta y sugerencias
-    # try:
-    #     asistente_ia = AsistenteIA()
-    #     recomendador_ia = RecomendadorIA()
-
-    #     # 1. Clasificar la pregunta
-    #     categoria_ia = asistente_ia.clasificar_pregunta(Pregunta.Pregunta)
-
-    #     # 2. Generar sugerencias de mejora
-    #     sugerencia_prompt = f"""
-    #     Como experto en soporte técnico, analiza esta pregunta y sugiere mejoras:
-
-    #     Título actual: {Pregunta.Titulo}
-    #     Pregunta actual: {Pregunta.Pregunta}
-    #     Categoría detectada: {categoria_ia}
-
-    #     Sugiere:
-    #     1. Un título más descriptivo
-    #     2. Cómo mejorar la claridad de la pregunta
-    #     3. Información adicional que sería útil
-
-    #     Responde en formato JSON.
-    #     """
-
-    #     try:
-    #         respuesta_ia = asistente_ia.generar_respuesta_automatica(sugerencia_prompt)
-    #         # Intentar parsear como JSON, si falla usar texto plano
-    #         if "{" in respuesta_ia and "}" in respuesta_ia:
-    #             sugerencias_ia = json.loads(respuesta_ia)
-    #         else:
-    #             sugerencias_ia = [{"sugerencia": respuesta_ia}]
-    #     except:
-    #         sugerencias_ia = [
-    #             {"sugerencia": "No se pudieron generar sugerencias en este momento."}
-    #         ]
-
-    #     # 3. Buscar preguntas similares para referencia
-    #     preguntas_similares = recomendador_ia.recomendar_respuestas_similares(
-    #         Pregunta.Pregunta
-    #     )
-
-    # except Exception as e:
-    #     print(f"Error en análisis IA de pregunta: {e}")
-    #     sugerencias_ia = [{"error": "El asistente de IA no está disponible"}]
-
-    form: PreguntasForm = PreguntasForm(instance=Pregunta)
-
-    if request.method == "POST":
-        form = PreguntasForm(request.POST, instance=Pregunta)
-
-        if form.is_valid():
-            pregunta_actualizada = form.save(commit=False)
-            pregunta_actualizada.Usuario = Pregunta.Usuario
-            pregunta_actualizada.Fecha_creacion = Pregunta.Fecha_creacion
-
-            # 🔥 INTEGRACIÓN DE IA: Re-clasificar después de modificación
-            try:
-                nueva_categoria = asistente_ia.clasificar_pregunta(
-                    pregunta_actualizada.Pregunta
-                )
-                # Aquí podrías guardar la categoría si agregas el campo al modelo
-                print(f"Pregunta modificada - Nueva categoría IA: {nueva_categoria}")
-            except Exception as e:
-                print(f"Error en re-clasificación IA: {e}")
-
-            pregunta_actualizada.save()
-            messages.success(request, "Pregunta modificada correctamente.")
-            return redirect("/Administracion/")
-        else:
-            messages.error(request, "Error en el formulario. Verifica los datos.")
-
-    return render(
-        request,
-        "ModificarPregunta.html",
-        {
-            "form": form,
-            "pregunta": Pregunta,
-            "sugerencias_ia": sugerencias_ia,
-            "categoria_ia": categoria_ia
-            if "categoria_ia" in locals()
-            else "No disponible",
-            "preguntas_similares": preguntas_similares
-            if "preguntas_similares" in locals()
-            else [],
-        },
-    )
 
 
 # 🔥 NUEVA VISTA: Panel de Analytics con IA

@@ -25,7 +25,7 @@
     <div class="MainTodo">
         <div class="MainPreguntar">
             <div class="InsPreguntas">
-                <form method="post">
+                <form method="post" action="{% url 'modificar_pregunta' pregunta.idPregunta %}">
                     {{form}}
                     {% csrf_token %}
                     <input type="submit" value="Modificar pregunta">

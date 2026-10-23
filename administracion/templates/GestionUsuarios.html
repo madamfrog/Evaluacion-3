@@ -50,8 +50,16 @@
                         </td>
                         <td>{{ Usuario.correo }}</td>
                         <td>{{ Usuario.rut }}</td>
-                        <td><label class="visually-hidden" for="activo-{{ Usuario.id }}">Cuenta activa</label><input id="activo-{{ Usuario.id }}" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %}/></td>
-                        <td><label class="visually-hidden" for="admin-{{ Usuario.id }}">Administrador</label><input id="admin-{{ Usuario.id }}" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %}/></td>
+                        
+                        <!-- FELIPE: EVITAR LA AUTODESACTIVACIÓN DEL ADMIN Y DEGRADACIÓN DEL MISMO -->
+                        {% if Usuario.admin %}
+                            <td><label class="visually-hidden" for="activo-{{ Usuario.id }}">Cuenta activa</label><input id="activo-{{ Usuario.id }}" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %} disabled/></td>
+                            <td><label class="visually-hidden" for="admin-{{ Usuario.id }}">Administrador</label><input id="admin-{{ Usuario.id }}" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %} disabled/></td>
+                        {% else %}
+                            <td><label class="visually-hidden" for="activo-{{ Usuario.id }}">Cuenta activa</label><input id="activo-{{ Usuario.id }}" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %}/></td>
+                            <td><label class="visually-hidden" for="admin-{{ Usuario.id }}">Administrador</label><input id="admin-{{ Usuario.id }}" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %}/></td>
+                        {% endif %}
+
                         <td><label class="visually-hidden" for="tecnico-{{ Usuario.id }}">Técnico</label><input id="tecnico-{{ Usuario.id }}" type="checkbox" name="tecnico" form="user-change-{{ Usuario.id }}" {% if Usuario.tecnico %}checked{% endif %}/></td>
                         <td>{{ Usuario.last_login }}</td>
                         <td>
