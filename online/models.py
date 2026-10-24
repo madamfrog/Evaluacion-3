@@ -94,11 +94,28 @@ class Usuario(AbstractBaseUser):
 
 
 class Preguntas(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('en_proceso', 'En Proceso'),
+        ('resuelto', 'Resuelto'),
+        ('cerrado', 'Cerrado'),
+    ]
+
+    PRIORIDAD_CHOICES = [
+        ('baja', 'Baja'),
+        ('media', 'Media'),
+        ('alta', 'Alta'),
+        ('urgente', 'Urgente'),
+    ]
+
     idPregunta = models.AutoField(primary_key=True)
     Titulo = models.CharField(max_length=60)
     Pregunta = models.TextField()
     Fecha_creacion = models.DateTimeField()
     Usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    categoria = models.CharField(max_length=50, default='otros', blank=True, null=True)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    prioridad = models.CharField(max_length=20, choices=PRIORIDAD_CHOICES, default='media')
 
     def __str__(self):
         return f"{self.idPregunta} - {self.Titulo}"

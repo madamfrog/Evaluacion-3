@@ -1,6 +1,10 @@
 {% extends "componentes/header.html" %}
 {% load static %}
 
+{% block links %}
+<link rel="stylesheet" href="{% static 'login.css' %}">
+{% endblock %}
+
 {% block title %}Cerrar Sesión{% endblock %}
 
 {% block content %}
@@ -9,31 +13,4 @@
     <p>¿Deseas <a href="{% url 'Login' %}">iniciar sesión</a> nuevamente?</p>
     <p>O puedes <a href="{% url 'index' %}">volver al inicio</a></p>
 </div>
-
-<style>
-.mainLogin {
-    width: auto;
-    height: 300px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-family: "DM Sans", sans-serif;
-    text-align: center;
-}
-
-.mainLogin h2 {
-    color: rgb(52, 32, 150);
-    margin-bottom: 20px;
-}
-
-.mainLogin a {
-    color: #4E31E1;
-    text-decoration: none;
-}
-
-.mainLogin a:hover {
-    text-decoration: underline;
-}
-</style>
 {% endblock %}

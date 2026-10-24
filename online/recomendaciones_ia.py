@@ -1,6 +1,10 @@
-from online.models import Preguntas, Respuesta
+import logging
 import re
 from django.db.models import Count
+from online.models import Preguntas
+
+# Configuración del logger para la app online
+logger = logging.getLogger(__name__)
 
 class RecomendadorIA:
     def __init__(self):
@@ -56,7 +60,7 @@ class RecomendadorIA:
             return recomendaciones[:3]
             
         except Exception as e:
-            print(f"Error en recomendaciones: {e}")
+            logger.error("Error en recomendaciones: %s", e)
             return []
     
     def _calcular_similitud(self, palabras1, palabras2, palabras_comunes):
@@ -64,12 +68,11 @@ class RecomendadorIA:
         if not palabras1 or not palabras2:
             return 0
         
-        # Ponderar por palabras únicas y longitud
         peso_palabras_comunes = len(palabras_comunes)
         peso_longitud = min(len(palabras1), len(palabras2)) / max(len(palabras1), len(palabras2))
         
         similitud = (peso_palabras_comunes * 0.7) + (peso_longitud * 0.3)
-        return min(similitud / 5, 1.0)  # Normalizar a 0-1
+        return min(similitud / 5, 1.0)
     
     def _limpiar_y_tokenizar(self, texto):
         """
@@ -78,11 +81,10 @@ class RecomendadorIA:
         if not texto:
             return []
         
-        # Convertir a minúsculas y eliminar caracteres especiales
-        texto_limpio = re.sub(r'[^\w\sáéíóúñ]', '', texto.lower())
-        # Tokenizar y eliminar palabras vacías
-        palabras = [palabra for palabra in texto_limpio.split() 
-                   if palabra not in self.palabras_comunes and len(palabra) > 2]
+        texto_limpio = re.sub(r'[^\w\sáéíóúñ]', '', texto.lower()) # Convertir a minúsculas y eliminar caracteres
+
+        palabras = [palabra for palabra in texto_limpio.split() # Eliminar palabras vacías
+                    if palabra not in self.palabras_comunes and len(palabra) > 2]
         
         return palabras
     
@@ -104,5 +106,9 @@ class RecomendadorIA:
                 for p in preguntas_populares
             ]
         except Exception as e:
-            print(f"Error obteniendo preguntas populares: {e}")
+            logger.error("Error obteniendo preguntas populares: %s", e)
             return []
+
+def obtener_recomendaciones_ia(nueva_pregunta):
+    recomendador = RecomendadorIA()
+    return recomendador.recomendar_respuestas_similares(nueva_pregunta)

@@ -1,6 +1,44 @@
 from django import forms
 from online.models import Usuario, Preguntas, Respuesta
 
+def validar_rut_chileno(rut_str):
+    """
+    Valida el formato y el dígito verificador de un RUT chileno y
+    acepta formatos con puntos y guion
+    """
+    import re
+    rut_limpio = re.sub(r'[\.\-\s]', '', rut_str).upper() # Limpiar puntos y guion
+
+    if len(rut_limpio) < 2:
+        return False
+        
+    cuerpo = rut_limpio[:-1]
+    dv = rut_limpio[-1]
+    
+    if not cuerpo.isdigit():
+        return False
+        
+    suma = 0
+    multiplicador = 2
+    for r in reversed(cuerpo):
+        suma += int(r) * multiplicador #Dígito verificador
+
+        multiplicador += 1
+        if multiplicador > 7:
+            multiplicador = 2
+            
+    resto = suma % 11
+    esperado = 11 - resto
+    
+    if esperado == 11:
+        dv_calculado = '0'
+    elif esperado == 10:
+        dv_calculado = 'K'
+    else:
+        dv_calculado = str(esperado)
+        
+    return dv_calculado == dv
+
 class RegisterForm(forms.ModelForm):
     password = forms.CharField(
         label='',
@@ -25,6 +63,16 @@ class RegisterForm(forms.ModelForm):
         if Usuario.objects.filter(correo=correo).exists():
             raise forms.ValidationError("El correo ya está en uso")
         return correo
+
+    def clean_rut(self):
+        rut = self.cleaned_data.get('rut')
+        if not validar_rut_chileno(rut):
+            raise forms.ValidationError("El RUT ingresado no es válido (verifique el dígito verificador).")
+        
+        if Usuario.objects.filter(rut=rut).exists():
+            raise forms.ValidationError("Este RUT ya está registrado.") #Verificar si ya existe el rut
+            
+        return rut
 
     def clean(self):
         cleaned_data = super().clean()

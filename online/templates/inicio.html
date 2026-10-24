@@ -26,67 +26,95 @@
                 </form>
             </div>
 
-            <div class="asistente-ia" style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white;">
-                <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+            <div class="asistente-ia">
+                <h3>
                     <i class="fas fa-robot"></i> Asistente Virtual IA
                 </h3>
-                <form method="get" action="" style="margin-bottom: 15px;">
-                    <div style="display: flex; gap: 10px;">
+                <form method="get" action="">
+                    <div class="search-group">
                         <input type="text" name="buscar_ayuda" placeholder="¿En qué puedo ayudarte? Ej: problema con internet, juego lento..."
-                               value="{{ request.GET.buscar_ayuda|default:'' }}"
-                               style="flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px;">
-                        <button type="submit" style="padding: 12px 20px; background: #4E31E1; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                               value="{{ request.GET.buscar_ayuda|default:'' }}">
+                        <button type="submit">
                             <i class="fas fa-search"></i> Buscar
                         </button>
                     </div>
                 </form>
-                <p style="font-size: 0.9em; opacity: 0.9; margin-bottom: 15px;">
+                <p>
                     Nuestra IA puede ayudarte con problemas de hardware, software, conexión y más.
                 </p>
+
+                <!-- Bloque de Política de Privacidad de IA -->
+                <div class="privacidad-box">
+                    <i class="fas fa-shield-alt"></i> <strong>Privacidad de IA:</strong> Las consultas enviadas son procesadas únicamente para responder a tus dudas y no se comparten datos personales confidenciales. 
+                    <button type="button" onclick="document.getElementById('modal-privacidad-ia').style.display='block'" class="btn-link-privacidad">
+                        Ver política completa
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Informativo de Privacidad -->
+            <div id="modal-privacidad-ia" class="modal-privacidad">
+                <div class="modal-contenido">
+                    <h3>
+                        <i class="fas fa-user-shield"></i> Política de Privacidad del Uso de IA
+                    </h3>
+                    <p>
+                        En Call Center Gamer nos tomamos en serio tu privacidad. Al utilizar nuestro Asistente Virtual basado en Inteligencia Artificial:
+                    </p>
+                    <ul>
+                        <li>Tus mensajes se procesan exclusivamente para generar soluciones y recomendaciones técnicas.</li>
+                        <li>No transmitimos contraseñas, datos bancarios ni información personal sensible a los modelos de lenguaje.</li>
+                        <li>El historial de consultas se utiliza únicamente para el seguimiento de tickets dentro del soporte del sitio.</li>
+                    </ul>
+                    <div class="modal-footer">
+                        <button type="button" onclick="document.getElementById('modal-privacidad-ia').style.display='none'" class="btn-entendido">
+                            Entendido
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {% if sugerencias_ia %}
-            <div class="resultados-ia" style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #4E31E1;">
-                <h4 style="color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+            <div class="resultados-ia">
+                <h4>
                     <i class="fas fa-lightbulb"></i> Sugerencias para: "{{ sugerencias_ia.consulta_original }}"
                 </h4>
-                <div class="respuesta-ia" style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                <div class="respuesta-ia">
+                    <div class="respuesta-header">
                         <i class="fas fa-robot" style="color: #4E31E1;"></i>
                         <strong style="color: #333;">Respuesta Automática:</strong>
                     </div>
-                    <div style="white-space: pre-line; line-height: 1.5; color: #555;">
+                    <div class="respuesta-texto">
                         {{ sugerencias_ia.respuesta_automatica }}
                     </div>
                 </div>
                 {% if sugerencias_ia.recomendaciones %}
-                <div class="recomendaciones-ia" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                <div class="recomendaciones-ia">
+                    <div class="recomendaciones-header">
                         <i class="fas fa-star" style="color: #ffc107;"></i>
                         <strong style="color: #333;">Preguntas Similares Resueltas:</strong>
                     </div>
                     {% for rec in sugerencias_ia.recomendaciones %}
-                    <div style="margin: 12px 0; padding: 12px; border-left: 3px solid #4E31E1; background: #f8f9fa; border-radius: 0 8px 8px 0;">
-                        <div style="display: flex; justify-content: between; align-items: start; gap: 10px; margin-bottom: 8px;">
+                    <div class="rec-item">
+                        <div class="rec-item-header">
                             <strong style="color: #333; flex: 1;">{{ rec.pregunta_similar }}</strong>
-                            <span style="background: #4E31E1; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em;">Similitud: {{ rec.similitud }}</span>
+                            <span class="badge-similitud">Similitud: {{ rec.similitud }}</span>
                         </div>
-                        <p style="color: #666; margin: 0; font-size: 0.9em; line-height: 1.4;">{{ rec.respuesta }}</p>
+                        <p class="rec-texto">{{ rec.respuesta }}</p>
                         {% if rec.categoria %}
-                        <div style="margin-top: 8px;"><span style="background: #e9ecef; color: #495057; padding: 2px 6px; border-radius: 8px; font-size: 0.8em;">{{ rec.categoria }}</span></div>
+                        <div class="rec-categoria-wrap"><span class="badge-categoria">{{ rec.categoria }}</span></div>
                         {% endif %}
                     </div>
                     {% endfor %}
                 </div>
                 {% else %}
-                <div style="text-align: center; padding: 20px; color: #666;">
-                    <i class="fas fa-info-circle" style="font-size: 2em; margin-bottom: 10px; opacity: 0.5;"></i>
+                <div class="sin-resultados">
+                    <i class="fas fa-info-circle"></i>
                     <p>No se encontraron preguntas similares en nuestra base de datos.</p>
                 </div>
                 {% endif %}
-                <div style="text-align: center; margin-top: 20px;">
-                    <a href="?buscar_ayuda={{ sugerencias_ia.consulta_original|urlencode }}#formulario-pregunta"
-                       style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #4E31E1; color: white; text-decoration: none; border-radius: 6px; font-size: 0.9em;">
+                <div class="btn-crear-wrap">
+                    <a href="?buscar_ayuda={{ sugerencias_ia.consulta_original|urlencode }}#formulario-pregunta" class="btn-crear-pregunta">
                         <i class="fas fa-question-circle"></i> Crear pregunta sobre este tema
                     </a>
                 </div>

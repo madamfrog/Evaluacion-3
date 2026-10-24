@@ -1,51 +1,41 @@
 {% extends "componentes/header.html" %}
-<!DOCTYPE html>
 {% load static %}
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="{% static 'estiloHeader.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Inicio{% endblock %}</title>
-</head>
+{% block title %}Inicio{% endblock %}
 
-<body>
-    {% block content %}
+{% block content %}
     {% if user.is_authenticated %}
-    {% if user.admin  or user.tecnico %}
-    <script>window.location.href = '/Administracion/';</script>
+        {% if user.admin or user.tecnico %}
+            <script>window.location.href = '/Administracion/';</script>
+        {% else %}
+            <script>window.location.href = '/Inicio/{{ user.id }}';</script>
+        {% endif %}
     {% endif %}
-    <script>window.location.href = '/Inicio/{{ user.id }}';</script>
-    {% endif %}
+
     <div class="Banner">
         <div class="contLeft"></div>
         <div class="contRight">
             <h1>Bienvenido a Call of Gamers!</h1>
-            <p>Comunicate con el mejor call center gamer, nosotros te brindaremos la solución necesaria para tu
-                problema, no dudes más!</p>
+            <p>Comunicate con el mejor call center gamer, nosotros te brindaremos la solución necesaria para tu problema, no dudes más!</p>
             <div class="contBtn">
                 <button id="btnIngresar" onclick="window.location.href = '/Login/'">Ingresar</button>
             </div>
         </div>
     </div>
+    
     <div class="mainCard">
         <div class="iCard"></div>
         <div class="dCard">
             <h1>Atención 24/7</h1>
-            <p>Comunicate con el mejor call center gamer, nosotros te brindaremos la solución necesaria para tu
-                problema, no dudes más!</p>
+            <p>Comunicate con el mejor call center gamer, nosotros te brindaremos la solución necesaria para tu problema, no dudes más!</p>
         </div>
     </div>
+    
     <div class="finalBody">
         <h1>Comunicate con nosotros</h1>
         <p>Escribenos y nuestros profesionales solucionaran tu problema en tan solo un momento!</p>
-        <div class="contBtn" style="margin-top: 65px;">
+        <div class="contBtn">
             <button id="btnIngresar" onclick="window.location.href = '/Login/'">Ingresar</button>
         </div>
     </div>
-    {% endblock %}
-</body>
-
-</html>
+{% endblock %}

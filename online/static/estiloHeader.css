@@ -262,6 +262,10 @@ main {
     color: #555;
 }
 
+.finalBody .contBtn {
+    margin-top: 65px;
+}
+
 .site-footer {
     position: fixed;
     z-index: 1001;
