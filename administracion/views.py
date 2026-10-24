@@ -4,6 +4,7 @@ import logging
 from typing import Any
 from wsgiref.util import request_uri
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, QuerySet
@@ -17,13 +18,7 @@ from online.ia_utils import AsistenteIA
 from online.models import Preguntas, Respuesta, Usuario
 from online.recomendaciones_ia import RecomendadorIA
 
-# FELIPE: CREE EL LOGGER, PARA REEMPLAZAR EL PRINT
-logger: logging.Logger = logging.getLogger(__name__)
-logging.basicConfig(
-    format="%(levelname)s %(asctime)s: %(message)s ==> Desde %(funcName)s En %(pathname)s",
-    datefmt="%H:%M:%S",
-    level=logging.INFO,
-)
+logger: logging.Logger = settings.LOGGER
 
 
 @login_required
