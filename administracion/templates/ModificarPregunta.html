@@ -15,12 +15,15 @@
 
 <body>
     {% block content %}
+
+    <!-- FELIPE: NO ES NECESARIO, ESTA LOGICA ESTA EN LAS VIEWS
     {% if user.admin == False%}
     {% if user.tecnico == True %}
     <script>window.location.href = '/Administracion/';</script>
     {% endif%}
     <script>window.location.href = '/Inicio/{{ user.id }}';</script>
     {% else %}
+    -->
     <h1 id="TituloMod">Modificar pregunta</h1>
     <div class="MainTodo">
         <div class="MainPreguntar">

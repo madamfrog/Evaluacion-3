@@ -1,5 +1,6 @@
+import datetime
 import json
-from datetime import timedelta
+import logging
 from typing import Any
 from wsgiref.util import request_uri
 
@@ -13,8 +14,16 @@ from django.views.decorators.http import require_POST
 
 from online.forms import PreguntasForm
 from online.ia_utils import AsistenteIA
-from online.models import Preguntas, Usuario
+from online.models import Preguntas, Respuesta, Usuario
 from online.recomendaciones_ia import RecomendadorIA
+
+# FELIPE: CREE EL LOGGER, PARA REEMPLAZAR EL PRINT
+logger: logging.Logger = logging.getLogger(__name__)
+logging.basicConfig(
+    format="%(levelname)s %(asctime)s: %(message)s ==> Desde %(funcName)s En %(pathname)s",
+    datefmt="%H:%M:%S",
+    level=logging.INFO,
+)
 
 
 @login_required
@@ -33,12 +42,15 @@ def IndexAdmin(request: HttpRequest) -> HttpResponse:
         usuario_id: Any | None = usuario.pk
         return redirect(f"/Inicio/{usuario_id}")
 
-    ListaPreguntas: QuerySet[Preguntas] = Preguntas.objects.all().order_by(
+    preguntas_ordenadas: QuerySet[Preguntas] = Preguntas.objects.all().order_by(
         "-Fecha_creacion"
     )
+
     tendencias_ia = []
     estadisticas_ia = {}
     alertas_ia = []
+
+    # FELIPE: NO ES NECESARIO, ESTOS DATOS SE MUESTRAN EN ANALITICS IA
 
     # try:
     #     asistente_ia = AsistenteIA()
@@ -99,7 +111,7 @@ def IndexAdmin(request: HttpRequest) -> HttpResponse:
         request,
         "indexAdmin.html",
         {
-            "Preguntas": ListaPreguntas,
+            "preguntas": preguntas_ordenadas,
             "tendencias_ia": tendencias_ia,
             "estadisticas_ia": estadisticas_ia,
             "alertas_ia": alertas_ia,
@@ -149,12 +161,15 @@ def ModificarPregunta(request: HttpRequest, idPregunta: int) -> HttpResponse:
         usuario_id: Any | None = usuario.pk
         return redirect(f"/Inicio/{usuario_id}")
 
-    Pregunta = get_object_or_404(Preguntas, idPregunta=idPregunta)
+    pregunta = get_object_or_404(Preguntas, idPregunta=idPregunta)
     sugerencias_ia: list[Any] = []
+
+    asistente_ia: AsistenteIA = AsistenteIA()
+    categoria_ia: str = ""
+    preguntas_similares: list[Any] = []
 
     # 🔥 INTEGRACIÓN DE IA: Análisis de la pregunta y sugerencias
     # try:
-    #     asistente_ia = AsistenteIA()
     #     recomendador_ia = RecomendadorIA()
 
     #     # 1. Clasificar la pregunta
@@ -197,50 +212,62 @@ def ModificarPregunta(request: HttpRequest, idPregunta: int) -> HttpResponse:
     #     print(f"Error en análisis IA de pregunta: {e}")
     #     sugerencias_ia = [{"error": "El asistente de IA no está disponible"}]
 
-    form: PreguntasForm = PreguntasForm(instance=Pregunta)
+    form: PreguntasForm = PreguntasForm(instance=pregunta)
 
     if request.method == "POST":
         response_post: dict[Any, Any] = request.POST.dict()
 
         # FELIPE: CAMBIE LA LOGICA PARA AGREGAR USUARIO Y FECHA DE CREACION (POR DEFECTO EN EL POST ERA '' Y DABA INVALIDO EN IS_VALID)
         response_post.update(
-            {"Usuario": Pregunta.Usuario, "Fecha_creacion": Pregunta.Fecha_creacion}
+            {"Usuario": pregunta.Usuario, "Fecha_creacion": pregunta.Fecha_creacion}
         )
 
-        form = PreguntasForm(response_post, instance=Pregunta)
+        form = PreguntasForm(response_post, instance=pregunta)
 
         if form.is_valid():
-            pregunta_actualizada = form.save(commit=False)
-
             # 🔥 INTEGRACIÓN DE IA: Re-clasificar después de modificación
             try:
-                nueva_categoria = asistente_ia.clasificar_pregunta(
-                    pregunta_actualizada.Pregunta
+                nueva_categoria: str = asistente_ia.clasificar_pregunta(
+                    response_post["Pregunta"]
                 )
-                # Aquí podrías guardar la categoría si agregas el campo al modelo
-                print(f"Pregunta modificada - Nueva categoría IA: {nueva_categoria}")
-            except Exception as e:
-                print(f"Error en re-clasificación IA: {e}")
 
-            pregunta_actualizada.save()
+                # Aquí podrías guardar la categoría si agregas el campo al modelo
+                logger.info(
+                    f"Pregunta modificada - Nueva categoría IA: {nueva_categoria}"
+                )
+            except Exception as e:
+                logger.info(f"Error en re-clasificación IA: {e}")
+
+            form = PreguntasForm(response_post, instance=pregunta)
+            form.save()
+
             messages.success(request, "Pregunta modificada correctamente.")
             return redirect("/Administracion/")
         else:
             messages.error(request, "Error en el formulario. Verifica los datos.")
+
+    resultado_categoria_ia: str
+    resultado_preguntas_similares: list[Any]
+
+    if "categoria_ia" in locals():
+        resultado_categoria_ia = categoria_ia
+    else:
+        resultado_categoria_ia = "No disponible"
+
+    if "preguntas_similares" in locals():
+        resultado_preguntas_similares = preguntas_similares
+    else:
+        resultado_preguntas_similares = []
 
     return render(
         request,
         "ModificarPregunta.html",
         {
             "form": form,
-            "pregunta": Pregunta,
+            "pregunta": pregunta,
             "sugerencias_ia": sugerencias_ia,
-            "categoria_ia": categoria_ia
-            if "categoria_ia" in locals()
-            else "No disponible",
-            "preguntas_similares": preguntas_similares
-            if "preguntas_similares" in locals()
-            else [],
+            "categoria_ia": resultado_categoria_ia,
+            "preguntas_similares": resultado_preguntas_similares,
         },
     )
 
@@ -321,7 +348,7 @@ def GestionUsuarios(request: HttpRequest) -> HttpResponse:
             cambios.append(f"Activo: {userchange.activo} → {activo}")
 
         if cambios:
-            print(f"Cambios de rol detectados por IA: {', '.join(cambios)}")
+            logger.info(msg=f"Cambios de rol detectados por IA: {', '.join(cambios)}")
 
         userchange.admin = admin
         userchange.activo = activo
@@ -379,22 +406,69 @@ def EliminarUsuario(request: HttpRequest, idUser: int) -> HttpResponse:
     return redirect("/GestionUsuarios/")
 
 
+def timedelta_string(delta: datetime.timedelta) -> str:
+    total_segundos: int = int(delta.total_seconds())
+
+    dias: int = total_segundos // 86400
+    segundos_restantes: int = total_segundos - (dias * 86400)
+
+    horas: int = total_segundos // 3600
+    segundos_restantes = total_segundos - (horas * 3600)
+
+    minutos = segundos_restantes // 60
+    # segundos = segundos_restantes - (minutos * 60)
+
+    # total time
+    return f"{dias} días y {horas:02}:{minutos:02} horas"
+
+
 # 🔥 NUEVA VISTA: Panel de Analytics con IA
 @login_required
 def AnalyticsIA(request: HttpRequest) -> HttpResponse:
     """
     Vista exclusiva para análisis avanzados con IA
     """
-    if not request.user.admin:
-        messages.error(request, "No tienes permisos de administrador.")
-        return redirect("/Inicio/" + str(request.user.id))
+
+    usuario: object = request.user
+    assert isinstance(usuario, Usuario)
+
+    es_admin: int = usuario.admin
+
+    if not es_admin:
+        usuario_id: Any | None = usuario.pk
+        return redirect(f"/Inicio/{usuario_id}")
+
+    # PROMEDIO DE RESPUESTAS ENTRE LA CRECION DE LA PREGUNTA HASTA LA PRIMERA RESPUESTA DE UN ADMIN O TECNICO
+    lista_preguntas: QuerySet[Preguntas] = Preguntas.objects.all()
+
+    lista_tiempo_duracion: list[datetime.timedelta] = []
+
+    for pregunta in lista_preguntas:
+        lista_respuestas = Respuesta.objects.filter(
+            id_Pregunta=pregunta.idPregunta
+        ).order_by("FechaHora")
+
+        fecha_creacion: datetime.datetime = pregunta.Fecha_creacion
+
+        for respuesta in lista_respuestas:
+            if respuesta.Usuario.admin | respuesta.Usuario.tecnico:
+                lista_tiempo_duracion.append(respuesta.FechaHora - fecha_creacion)
+                break
+        else:
+            lista_tiempo_duracion.append(timezone.now() - fecha_creacion)
+
+    total_duracion_respuestas: datetime.timedelta = sum(
+        lista_tiempo_duracion, datetime.timedelta(0)
+    ) / len(lista_tiempo_duracion)
+
+    promedio_respuestas: Any = timedelta_string(total_duracion_respuestas)
 
     try:
         asistente_ia = AsistenteIA()
 
         # Análisis de tendencias temporales
         preguntas_ultimo_mes = Preguntas.objects.filter(
-            Fecha_creacion__gte=timezone.now() - timedelta(days=30)
+            Fecha_creacion__gte=timezone.now() - datetime.timedelta(days=30)
         )
 
         # Análisis por categorías (usando IA)
@@ -405,7 +479,7 @@ def AnalyticsIA(request: HttpRequest) -> HttpResponse:
                 if categoria not in categorias_analisis:
                     categorias_analisis[categoria] = 0
                 categorias_analisis[categoria] += 1
-            except:
+            except Exception:
                 pass
 
         # Usuarios más activos
@@ -424,11 +498,11 @@ def AnalyticsIA(request: HttpRequest) -> HttpResponse:
             "preguntas_sin_respuesta": Preguntas.objects.filter(
                 respuesta__isnull=True
             ).count(),
-            "tiempo_promedio_respuesta": "2.5 días",  # Esto sería un cálculo real en producción
+            "tiempo_promedio_respuesta": promedio_respuestas,
         }
 
     except Exception as e:
-        print(f"Error en analytics IA: {e}")
+        logger.info(msg=f"Error en analytics IA: {e}")
         analytics_data = {"error": "No se pudieron cargar los analytics"}
 
     return render(request, "analytics_ia.html", {"analytics_data": analytics_data})
