@@ -103,9 +103,9 @@ def IndexAdmin(request: HttpRequest) -> HttpResponse:
     #     }
 
     return render(
-        request,
-        "indexAdmin.html",
-        {
+        request       = request,
+        template_name = "indexAdmin.html",
+        context       = {
             "preguntas": preguntas_ordenadas,
             "tendencias_ia": tendencias_ia,
             "estadisticas_ia": estadisticas_ia,
@@ -162,6 +162,8 @@ def ModificarPregunta(request: HttpRequest, idPregunta: int) -> HttpResponse:
     asistente_ia: AsistenteIA = AsistenteIA()
     categoria_ia: str = ""
     preguntas_similares: list[Any] = []
+
+    # FELIPE: NO ES NECESARIO, ESTOS DATOS SE MUESTRAN EN ANALITICS IA
 
     # 🔥 INTEGRACIÓN DE IA: Análisis de la pregunta y sugerencias
     # try:
@@ -255,9 +257,9 @@ def ModificarPregunta(request: HttpRequest, idPregunta: int) -> HttpResponse:
         resultado_preguntas_similares = []
 
     return render(
-        request,
-        "ModificarPregunta.html",
-        {
+        request       = request,
+        template_name = "ModificarPregunta.html",
+        context       = {
             "form": form,
             "pregunta": pregunta,
             "sugerencias_ia": sugerencias_ia,
@@ -285,12 +287,12 @@ def GestionUsuarios(request: HttpRequest) -> HttpResponse:
 
     Usuarios: QuerySet[Usuario] = Usuario.objects.all()
 
-    # 🔥 INTEGRACIÓN DE IA: Análisis de actividad de usuarios
-    analisis_usuarios: list[Any] = []
+    # FELIPE: NO ES NECESARIO, ESTOS DATOS SE MUESTRAN EN ANALITICS IA
 
+    # 🔥 INTEGRACIÓN DE IA: Análisis de actividad de usuarios
+    # analisis_usuarios: list[Any] = []
     # try:
     #     asistente_ia = AsistenteIA()
-
     #     for usuario in Usuarios:
     #         preguntas_usuario = Preguntas.objects.filter(Usuario=usuario)
     #         total_preguntas = preguntas_usuario.count()
@@ -357,9 +359,9 @@ def GestionUsuarios(request: HttpRequest) -> HttpResponse:
         return redirect("/GestionUsuarios/")
 
     return render(
-        request,
-        "GestionUsuarios.html",
-        {"Usuarios": Usuarios, "analisis_usuarios": analisis_usuarios},
+        request       = request,
+        template_name = "GestionUsuarios.html",
+        context       = {"Usuarios": Usuarios},
     )
 
 
@@ -401,6 +403,31 @@ def EliminarUsuario(request: HttpRequest, idUser: int) -> HttpResponse:
     return redirect("/GestionUsuarios/")
 
 
+def promedio_respuestas_admin() -> datetime.timedelta:
+    # PROMEDIO DE RESPUESTAS ENTRE LA CRECION DE LA PREGUNTA HASTA LA PRIMERA RESPUESTA DE UN ADMIN O TECNICO
+    lista_preguntas: QuerySet[Preguntas] = Preguntas.objects.all()
+
+    lista_tiempo_duracion: list[datetime.timedelta] = []
+
+    for pregunta in lista_preguntas:
+        lista_respuestas = Respuesta.objects.filter(
+            id_Pregunta=pregunta.idPregunta
+        ).order_by("FechaHora")
+
+        fecha_creacion: datetime.datetime = pregunta.Fecha_creacion
+
+        for respuesta in lista_respuestas:
+            if respuesta.Usuario.admin | respuesta.Usuario.tecnico:
+                lista_tiempo_duracion.append(respuesta.FechaHora - fecha_creacion)
+                break
+        else:
+            lista_tiempo_duracion.append(timezone.now() - fecha_creacion)
+
+    return sum(lista_tiempo_duracion, datetime.timedelta(0)) / len(
+        lista_tiempo_duracion
+    )
+
+
 def timedelta_string(delta: datetime.timedelta) -> str:
     total_segundos: int = int(delta.total_seconds())
 
@@ -433,30 +460,8 @@ def AnalyticsIA(request: HttpRequest) -> HttpResponse:
         usuario_id: Any | None = usuario.pk
         return redirect(f"/Inicio/{usuario_id}")
 
-    # PROMEDIO DE RESPUESTAS ENTRE LA CRECION DE LA PREGUNTA HASTA LA PRIMERA RESPUESTA DE UN ADMIN O TECNICO
-    lista_preguntas: QuerySet[Preguntas] = Preguntas.objects.all()
-
-    lista_tiempo_duracion: list[datetime.timedelta] = []
-
-    for pregunta in lista_preguntas:
-        lista_respuestas = Respuesta.objects.filter(
-            id_Pregunta=pregunta.idPregunta
-        ).order_by("FechaHora")
-
-        fecha_creacion: datetime.datetime = pregunta.Fecha_creacion
-
-        for respuesta in lista_respuestas:
-            if respuesta.Usuario.admin | respuesta.Usuario.tecnico:
-                lista_tiempo_duracion.append(respuesta.FechaHora - fecha_creacion)
-                break
-        else:
-            lista_tiempo_duracion.append(timezone.now() - fecha_creacion)
-
-    total_duracion_respuestas: datetime.timedelta = sum(
-        lista_tiempo_duracion, datetime.timedelta(0)
-    ) / len(lista_tiempo_duracion)
-
-    promedio_respuestas: Any = timedelta_string(total_duracion_respuestas)
+    total_promedio_respuestas: datetime.timedelta = promedio_respuestas_admin()
+    promedio_respuestas: Any = timedelta_string(total_promedio_respuestas)
 
     try:
         asistente_ia = AsistenteIA()
@@ -469,25 +474,20 @@ def AnalyticsIA(request: HttpRequest) -> HttpResponse:
         # Análisis por categorías (usando IA)
         categorias_analisis = {}
         for pregunta in preguntas_ultimo_mes[:50]:  # Limitar para no sobrecargar la API
-            try:
-                categoria = asistente_ia.clasificar_pregunta(pregunta.Pregunta)
-                if categoria not in categorias_analisis:
-                    categorias_analisis[categoria] = 0
-                categorias_analisis[categoria] += 1
-            except Exception:
-                pass
+            categoria: Any | str = asistente_ia.clasificar_pregunta(pregunta.Pregunta)
+            if categoria not in categorias_analisis:
+                categorias_analisis[categoria] = 0
+            categorias_analisis[categoria] += 1
 
         # Usuarios más activos
         usuarios_activos = Usuario.objects.annotate(
             num_preguntas=Count("preguntas")
         ).order_by("-num_preguntas")[:10]
 
-        analytics_data = {
+        analytics_data: dict[Any, Any] = {
             "total_preguntas_mes": preguntas_ultimo_mes.count(),
             "categorias_tendencia": dict(
-                sorted(categorias_analisis.items(), key=lambda x: x[1], reverse=True)[
-                    :5
-                ]
+                sorted(categorias_analisis.items(), key=lambda x: x[1], reverse=True)[:5]
             ),
             "usuarios_activos": usuarios_activos,
             "preguntas_sin_respuesta": Preguntas.objects.filter(
@@ -500,4 +500,7 @@ def AnalyticsIA(request: HttpRequest) -> HttpResponse:
         logger.info(msg=f"Error en analytics IA: {e}")
         analytics_data = {"error": "No se pudieron cargar los analytics"}
 
-    return render(request, "analytics_ia.html", {"analytics_data": analytics_data})
+    return render(
+        request       = request, 
+        template_name = "analytics_ia.html", 
+        context       = {"analytics_data": analytics_data})
