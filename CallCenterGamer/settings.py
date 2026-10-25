@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import logging
 import os
 from pathlib import Path
+from typing import Any
 from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -166,10 +167,25 @@ CSRF_COOKIE_SECURE = not DEBUG
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 
-# FELIPE: CREE EL LOGGER, PARA REEMPLAZAR EL PRINT
+# FELIPE: CREÉ EL LOGGER, PARA REEMPLAZAR EL PRINT
 LOGGER: logging.Logger = logging.getLogger(__name__)
 logging.basicConfig(
     format="%(levelname)s %(asctime)s: %(message)s ==> Desde %(funcName)s En %(pathname)s",
     datefmt="%H:%M:%S",
     level=logging.INFO,
 )
+
+
+
+# FELIPE: ENVIO DE CORREO DE CAMBIO DE CONTRASEÑAS
+MAILERS: dict[str, str | dict[Any, Any]] = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": "smtp.gmail.com",
+            "use_tls": True,
+            "username": "fuentes.zuniga.felipe@gmail.com",
+            "password": "vjlk isex braa kejy",
+        },
+    },
+}

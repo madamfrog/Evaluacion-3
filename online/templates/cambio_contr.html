@@ -1,0 +1,9 @@
+
+
+<form method="post" action="{% url 'password-reset' %}">
+  {% csrf_token %}
+  <input type="text" placeholder="Nueva contraseña" name="password">
+  <input type="text" placeholder="Confirme la contraseña" name="confimar_password">
+  <button type="submit">Confimar</button>
+  <input type="hidden" value="{{ token }}" name="token">
+</form>

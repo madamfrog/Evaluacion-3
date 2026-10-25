@@ -1,5 +1,9 @@
+from datetime import datetime
+from time import timezone
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
+from django.db.models.fields import DateTimeField, TextField
 
 
 class UserManager(BaseUserManager):
@@ -59,6 +63,9 @@ class Usuario(AbstractBaseUser):
     activo = models.BooleanField(default=True)
     admin = models.BooleanField(default=False)
     tecnico = models.BooleanField(default=False)
+
+    token = TextField(default="")
+    token_hasta = DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = "usuario"
     REQUIRED_FIELDS = ["correo"]

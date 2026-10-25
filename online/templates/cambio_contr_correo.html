@@ -1,0 +1,6 @@
+
+
+<form method="post" action="{% url 'password-reset-email' %}">
+  {% csrf_token %}
+  <input type="text" placeholder="Ingrese el correo" name="correo"/>
+</form>

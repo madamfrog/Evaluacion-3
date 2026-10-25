@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from django.core.cache import cache
 from openai import OpenAI, OpenAIError
 
@@ -10,13 +9,11 @@ logger = logging.getLogger(__name__)
 
 class AsistenteIA:
     def __init__(self) -> None:
-        self.api_key = settings.OPENAI_API_KEY
+        self.MODEL = "llama3.1:8b"
 
+    # FELIPE: NO ES NECESARIO LA API KEY, PORQUE LA IA ES LOCAL
     def _client(self) -> OpenAI:
-        if not self.api_key:
-            logger.error("La variable de entorno OPENAI_API_KEY no está configurada.")
-            return OpenAI()
-        return OpenAI(api_key=self.api_key)
+        return OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
 
     def generar_respuesta_automatica(
         self, pregunta: str, historial_contexto: str = ""
@@ -50,7 +47,7 @@ class AsistenteIA:
             """
 
             response = self._client().chat.completions.create(
-                model="gpt-3.5-turbo",
+                model=self.MODEL,
                 messages=[
                     {
                         "role": "system",
@@ -90,6 +87,7 @@ class AsistenteIA:
         cache_key: str = f"ia_clasificacion_{hash(pregunta_key)}"
 
         categoria_cacheada: str = cache.get(cache_key)
+
         if categoria_cacheada:
             return categoria_cacheada
 
@@ -103,7 +101,7 @@ class AsistenteIA:
             """
 
             response = self._client().chat.completions.create(
-                model="gpt-3.5-turbo",
+                model=self.MODEL,
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=50,
                 temperature=0.3,

@@ -8,7 +8,7 @@
         {% if user.admin or user.tecnico %}
             <script>window.location.href = '/Administracion/';</script>
         {% else %}
-            <script>window.location.href = '/Inicio/{{ user.id }}';</script>
+            <script>window.location.href = '/Inicio/';</script>
         {% endif %}
     {% endif %}
 

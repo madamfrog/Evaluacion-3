@@ -6,21 +6,24 @@
 
 from django.contrib import admin
 from django.urls import path
+
+from administracion.views import (
+    AnalyticsIA,
+    BorrarPregunta,
+    EliminarUsuario,
+    GestionUsuarios,
+    IndexAdmin,
+    ModificarPregunta,
+)
 from online.views import (
+    CambioContr,
+    CambioContrEmail,
     Index,
     Inicio,
-    RegisterView,
     LoginView,
+    RegisterView,
     ViewRespuestas,
     logout_view,
-)
-from administracion.views import (
-    IndexAdmin,
-    BorrarPregunta,
-    GestionUsuarios,
-    EliminarUsuario,
-    ModificarPregunta,
-    AnalyticsIA,
 )
 
 urlpatterns = [
@@ -30,7 +33,7 @@ urlpatterns = [
     path("AnalyticsIA/", AnalyticsIA, name="analytics_ia"),
     path("Login/", LoginView.as_view(), name="Login"),
     path("Register/", RegisterView.as_view(), name="Register"),
-    path("Inicio/<int:id>/", Inicio, name="inicio"),
+    path("Inicio/", Inicio, name="inicio"),
     # Usar vista personalizada para logout
     path("Logout/", logout_view, name="Logout"),
     path("Respuesta/<int:idUser>/<int:idPregunta>/", ViewRespuestas, name="respuestas"),
@@ -43,4 +46,7 @@ urlpatterns = [
         ModificarPregunta,
         name="modificar_pregunta",
     ),
+    # CAMBIO DE CONTRASEÑAS
+    path("cambio-contrasena-send-email/", CambioContrEmail, name='password-reset-email'),
+    path("cambio-contrasena/", CambioContr, name='password-reset'),
 ]

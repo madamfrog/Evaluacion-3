@@ -341,3 +341,19 @@
     border-radius: 6px;
     font-size: 0.9em;
 }
+
+.strong-rect-item-header {
+    flex: 1;
+}
+
+.strong-color {
+    color: #333;
+}
+
+.icon-color-yellow {
+    color: #ffc107;
+}
+
+.icon-color-purple {
+    color: #4E31E1;
+}

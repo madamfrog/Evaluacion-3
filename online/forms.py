@@ -1,43 +1,37 @@
-from django import forms
-from online.models import Usuario, Preguntas, Respuesta
+from typing import Any
 
-def validar_rut_chileno(rut_str):
+import chilean_rut
+from django import forms
+
+from online.models import Preguntas, Respuesta, Usuario
+
+
+def validar_rut_chileno(rut_str: str) -> str | bool:
     """
     Valida el formato y el dígito verificador de un RUT chileno y
-    acepta formatos con puntos y guion
+    Acepta todo tipo de formato 
+    EJEMPLOS:
+        -- BUEN CODIGO VERIFICADOR
+        "17317684-8" -> 17.317.684-8
+
+        -- MAL CODIGO VERIFICADOR
+        "17317684-1" -> FALSE
+
+        -- MAL RUT
+        123.111.111-2 -> FALSE
     """
-    import re
-    rut_limpio = re.sub(r'[\.\-\s]', '', rut_str).upper() # Limpiar puntos y guion
+    try:
+        es_valido_rut: bool = chilean_rut.is_valid(rut=rut_str)
 
-    if len(rut_limpio) < 2:
-        return False
-        
-    cuerpo = rut_limpio[:-1]
-    dv = rut_limpio[-1]
-    
-    if not cuerpo.isdigit():
-        return False
-        
-    suma = 0
-    multiplicador = 2
-    for r in reversed(cuerpo):
-        suma += int(r) * multiplicador #Dígito verificador
+        if not es_valido_rut:
+            return False
 
-        multiplicador += 1
-        if multiplicador > 7:
-            multiplicador = 2
-            
-    resto = suma % 11
-    esperado = 11 - resto
-    
-    if esperado == 11:
-        dv_calculado = '0'
-    elif esperado == 10:
-        dv_calculado = 'K'
-    else:
-        dv_calculado = str(esperado)
-        
-    return dv_calculado == dv
+        rut_formateado: str = chilean_rut.format_rut(rut=rut_str, validate_rut=es_valido_rut)
+
+    except ValueError:
+        return False
+
+    return rut_formateado
 
 class RegisterForm(forms.ModelForm):
     password = forms.CharField(
@@ -65,14 +59,20 @@ class RegisterForm(forms.ModelForm):
         return correo
 
     def clean_rut(self):
-        rut = self.cleaned_data.get('rut')
-        if not validar_rut_chileno(rut):
+        rut: Any | None = self.cleaned_data.get('rut')
+
+        if rut is None:
+            raise forms.ValidationError("Por favor ingresar el Rut")
+
+        rut_formateado: str | bool = validar_rut_chileno(rut_str=rut)
+
+        if rut_formateado == False:
             raise forms.ValidationError("El RUT ingresado no es válido (verifique el dígito verificador).")
         
-        if Usuario.objects.filter(rut=rut).exists():
+        if Usuario.objects.filter(rut=rut_formateado).exists():
             raise forms.ValidationError("Este RUT ya está registrado.") #Verificar si ya existe el rut
             
-        return rut
+        return rut_formateado
 
     def clean(self):
         cleaned_data = super().clean()

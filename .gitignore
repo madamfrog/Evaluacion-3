@@ -5,3 +5,6 @@
 
 # VIRTUAL ENVIRONMENT
 .venv
+
+# VSCODE
+.vscode

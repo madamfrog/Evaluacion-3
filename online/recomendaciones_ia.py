@@ -1,26 +1,30 @@
 import logging
 import re
-from django.db.models import Count
+from typing import Any, Literal
+
+from django.conf import settings
+from django.db.models import Count, QuerySet
+
 from online.models import Preguntas
 
 # Configuración del logger para la app online
-logger = logging.getLogger(__name__)
 
+logger: logging.Logger = settings.LOGGER
 class RecomendadorIA:
-    def __init__(self):
+    def __init__(self) -> None:
         self.palabras_comunes = [
             'el', 'la', 'de', 'que', 'y', 'en', 'un', 'es', 'se', 'no', 
             'te', 'lo', 'le', 'su', 'por', 'con', 'para', 'al', 'del',
             'los', 'las', 'una', 'uno', 'como', 'pero', 'mi', 'ya', 'muy'
         ]
     
-    def recomendar_respuestas_similares(self, nueva_pregunta):
+    def recomendar_respuestas_similares(self, nueva_pregunta: str) -> list[Any]:
         """
         Encuentra preguntas similares usando comparación simple de palabras
         """
         try:
             # Obtener todas las preguntas resueltas
-            preguntas_resueltas = Preguntas.objects.filter(
+            preguntas_resueltas: QuerySet[Preguntas] = Preguntas.objects.filter(
                 respuesta__isnull=False
             ).distinct()
             
@@ -28,22 +32,22 @@ class RecomendadorIA:
                 return []
             
             # Limpiar y tokenizar la nueva pregunta
-            palabras_nueva = self._limpiar_y_tokenizar(nueva_pregunta)
+            palabras_nueva: list[str] = self._limpiar_y_tokenizar(nueva_pregunta)
             
-            recomendaciones = []
+            recomendaciones: list[Any] = []
             
             for pregunta in preguntas_resueltas:
                 # Combinar título y pregunta para la comparación
-                texto_pregunta = f"{pregunta.Titulo} {pregunta.Pregunta}"
-                palabras_pregunta = self._limpiar_y_tokenizar(texto_pregunta)
+                texto_pregunta: str = f"{pregunta.Titulo} {pregunta.Pregunta}"
+                palabras_pregunta: list[str] = self._limpiar_y_tokenizar(texto_pregunta)
                 
                 # Calcular similitud simple (intersección de palabras)
-                palabras_comunes = set(palabras_nueva) & set(palabras_pregunta)
-                palabras_comunes = [p for p in palabras_comunes if p not in self.palabras_comunes and len(p) > 3]
+                palabras_comunes: set[str] = set(palabras_nueva) & set(palabras_pregunta)
+                lista_palabras_comunes: list[str] = [p for p in palabras_comunes if p not in self.palabras_comunes and len(p) > 3]
                 
                 if palabras_comunes:
                     # Calcular similitud más sofisticada
-                    similitud = self._calcular_similitud(palabras_nueva, palabras_pregunta, palabras_comunes)
+                    similitud: float | Literal[0] = self._calcular_similitud(palabras_nueva, palabras_pregunta, lista_palabras_comunes)
                     
                     if similitud > 0.15:  # Umbral mínimo de similitud
                         mejor_respuesta = pregunta.respuesta_set.first()
@@ -63,7 +67,7 @@ class RecomendadorIA:
             logger.error("Error en recomendaciones: %s", e)
             return []
     
-    def _calcular_similitud(self, palabras1, palabras2, palabras_comunes):
+    def _calcular_similitud(self, palabras1: list[str], palabras2: list[str], palabras_comunes: list[str]) -> float | Literal[0]:
         """Calcula similitud entre dos conjuntos de palabras"""
         if not palabras1 or not palabras2:
             return 0
@@ -74,7 +78,7 @@ class RecomendadorIA:
         similitud = (peso_palabras_comunes * 0.7) + (peso_longitud * 0.3)
         return min(similitud / 5, 1.0)
     
-    def _limpiar_y_tokenizar(self, texto):
+    def _limpiar_y_tokenizar(self, texto: str) -> list[str]:
         """
         Limpia y tokeniza el texto para comparación
         """
@@ -88,7 +92,7 @@ class RecomendadorIA:
         
         return palabras
     
-    def obtener_preguntas_populares(self, limite=5):
+    def obtener_preguntas_populares(self, limite: int = 5) -> list[Any]:
         """
         Obtiene las preguntas más populares/resueltas
         """
@@ -109,6 +113,6 @@ class RecomendadorIA:
             logger.error("Error obteniendo preguntas populares: %s", e)
             return []
 
-def obtener_recomendaciones_ia(nueva_pregunta):
+def obtener_recomendaciones_ia(nueva_pregunta: str) -> list[str]:
     recomendador = RecomendadorIA()
     return recomendador.recomendar_respuestas_similares(nueva_pregunta)

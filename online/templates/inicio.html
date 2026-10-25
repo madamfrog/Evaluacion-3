@@ -15,7 +15,6 @@
 
 <body>
     {% block content %}
-    {% if user.id == id and user.admin == False and user.tecnico == False %}
     <div class="MainTodo">
         <div class="MainPreguntar">
             <div class="InsPreguntas">
@@ -81,8 +80,8 @@
                 </h4>
                 <div class="respuesta-ia">
                     <div class="respuesta-header">
-                        <i class="fas fa-robot" style="color: #4E31E1;"></i>
-                        <strong style="color: #333;">Respuesta Automática:</strong>
+                        <i class="fas fa-robot icon-color-purple"></i>
+                        <strong class="strong-color">Respuesta Automática:</strong>
                     </div>
                     <div class="respuesta-texto">
                         {{ sugerencias_ia.respuesta_automatica }}
@@ -91,13 +90,13 @@
                 {% if sugerencias_ia.recomendaciones %}
                 <div class="recomendaciones-ia">
                     <div class="recomendaciones-header">
-                        <i class="fas fa-star" style="color: #ffc107;"></i>
-                        <strong style="color: #333;">Preguntas Similares Resueltas:</strong>
+                        <i class="fas fa-star icon-color-yellow"></i>
+                        <strong class="strong-color">Preguntas Similares Resueltas:</strong>
                     </div>
                     {% for rec in sugerencias_ia.recomendaciones %}
                     <div class="rec-item">
-                        <div class="rec-item-header">
-                            <strong style="color: #333; flex: 1;">{{ rec.pregunta_similar }}</strong>
+                        <div class="rec-item-header strong-color">
+                            <strong class="strong-rect-item-header">{{ rec.pregunta_similar }}</strong>
                             <span class="badge-similitud">Similitud: {{ rec.similitud }}</span>
                         </div>
                         <p class="rec-texto">{{ rec.respuesta }}</p>
@@ -114,12 +113,13 @@
                 </div>
                 {% endif %}
                 <div class="btn-crear-wrap">
-                    <a href="?buscar_ayuda={{ sugerencias_ia.consulta_original|urlencode }}#formulario-pregunta" class="btn-crear-pregunta">
+                    <a href="?buscar_ayuda={{ sugerencias_ia.consulta_original|urlencode }}" class="btn-crear-pregunta">
                         <i class="fas fa-question-circle"></i> Crear pregunta sobre este tema
                     </a>
                 </div>
             </div>
             {% endif %}
+            <div style="height: 10rem;"></div>
         </div>
 
         <div class="MainPreguntas">
@@ -134,12 +134,6 @@
             {% endfor %}
         </div>
     </div>
-    {% else %}
-    {% if user.admin or user.tecnico %}
-    <script>window.location.href = '/Administracion/';</script>
-    {% endif %}
-    <script>window.location.href = '/Inicio/{{ user.id }}';</script>
-    {% endif %}
     {% endblock %}
 </body>
 </html>
