@@ -1,4 +1,9 @@
+{% extends "componentes/header.html" %}
+{% load static %}
+{% block title %}Cambio Contraseña{% endblock %}
 
+
+{% block content %}
 
 <form method="post" action="{% url 'password-reset' %}">
   {% csrf_token %}
@@ -7,3 +12,5 @@
   <button type="submit">Confimar</button>
   <input type="hidden" value="{{ token }}" name="token">
 </form>
+
+{% endblock %}

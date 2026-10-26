@@ -277,8 +277,7 @@ def GestionUsuarios(request: HttpRequest) -> HttpResponse:
     es_tecnico: int = usuario.tecnico
 
     if not es_admin and not es_tecnico:
-        usuario_id: Any | None = usuario.pk
-        return redirect(f"/Inicio/{usuario_id}")
+        return redirect(f"/Inicio/")
 
     Usuarios: QuerySet[Usuario] = Usuario.objects.all()
 

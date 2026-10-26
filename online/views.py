@@ -222,14 +222,19 @@ class LoginView(FormView):
 
         user = authenticate(request, username=usuario, password=password)
         if user is not None:
+            logger.info("Usuario encontrado")
+
             login(request, user)
             if not remember_me:
                 request.session.set_expiry(0)
             if user.admin or user.tecnico:
                 return redirect("/Administracion/")
             return redirect("/Inicio/")
+
+        logger.info("Usuario No encontrado")
         form.add_error(None, "Usuario o contraseña incorrectos.")
         return super().form_invalid(form)
+
 
 
 
@@ -257,11 +262,14 @@ def CambioContrEmail(request: HttpRequest) -> HttpResponse:
 
         logger.info("Correo Confirmado")
 
+        logger.info("Enviando Correo")
         contenido_HTML = render_to_string(
             template_name='email.html',
             context={"link": f"http://localhost:8000/cambio-contrasena/?token={token_uuid}"},
         )
+        logger.info("HTML Creado")
 
+        logger.info("Creando Mensaje")
         message_email = EmailMultiAlternatives(
             subject="Cambio de Contraseña",
             body="Sí usted cree que esto fue una equivocación, por favor ignore este mensaje.",
@@ -269,11 +277,14 @@ def CambioContrEmail(request: HttpRequest) -> HttpResponse:
             to=[correo],
             headers={},
         )
+        logger.info("Mensaje Creado")
 
+        logger.info("Adjuntando Alternativas")
         message_email.attach_alternative(content=contenido_HTML, mimetype="text/html")
+        logger.info("Tratando de enviar Correo")
         message_email.send()
         logger.info("Correo Enviado")
-    
+
     return render(
         request       = request,
         template_name = 'cambio_contr_correo.html',

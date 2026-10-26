@@ -1,8 +1,5 @@
 {% extends "componentes/header.html" %}
 {% load static %}
-{% block links%}
-<link rel="stylesheet" href="{% static 'gestion.css' %}">
-{% endblock %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,18 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block title %} Gestion de usuarios {% endblock %}
 </head>
+
 <body>
-    {% if user.is_authenticated %}
     {% block content %}
-        {% if user.admin == False%}
-            {% if user.tecnico == True %}
-                <script>window.location.href = '/Administracion/';</script>
-            {% endif %}
-            <script>window.location.href = '/Inicio/{{ user.id }}';</script>
-        {% endif %}
-        <h1 id="Titulo">Gestion de Usuarios</h1>
-        <div class="Container">
-            <table class="table">
+
+        <h1 class="mt-5 text-center">Gestion de Usuarios</h1>
+
+        <div class="container mt-5">
+            <table class="table table-striped table-hover">
                 <thead>
                   <tr>
                     <th scope="col">id</th>
@@ -50,28 +43,58 @@
                         </td>
                         <td>{{ Usuario.correo }}</td>
                         <td>{{ Usuario.rut }}</td>
-                        
+
+
                         <!-- FELIPE: EVITAR LA AUTODESACTIVACIÓN DEL ADMIN Y DEGRADACIÓN DEL MISMO -->
                         {% if Usuario.admin %}
-                            <td><label class="visually-hidden" for="activo-{{ Usuario.id }}">Cuenta activa</label><input id="activo-{{ Usuario.id }}" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %} disabled/></td>
-                            <td><label class="visually-hidden" for="admin-{{ Usuario.id }}">Administrador</label><input id="admin-{{ Usuario.id }}" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %} disabled/></td>
-                        {% else %}
-                            <td><label class="visually-hidden" for="activo-{{ Usuario.id }}">Cuenta activa</label><input id="activo-{{ Usuario.id }}" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %}/></td>
-                            <td><label class="visually-hidden" for="admin-{{ Usuario.id }}">Administrador</label><input id="admin-{{ Usuario.id }}" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %}/></td>
-                        {% endif %}
-
-                        <td><label class="visually-hidden" for="tecnico-{{ Usuario.id }}">Técnico</label><input id="tecnico-{{ Usuario.id }}" type="checkbox" name="tecnico" form="user-change-{{ Usuario.id }}" {% if Usuario.tecnico %}checked{% endif %}/></td>
-                        <td>{{ Usuario.last_login }}</td>
                         <td>
-                            <button id="btnModif" type="submit" form="user-change-{{ Usuario.id }}"><i class="fa-solid fa-pen"></i></button>
+                            <label class="visually-hidden" for="activo-{{ Usuario.id }}">Cuenta activa</label><input id="activo-{{ Usuario.id }}" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %} disabled/>
+                        </td>
+                        <td>
+                            <label class="visually-hidden" for="admin-{{ Usuario.id }}">Administrador</label><input id="admin-{{ Usuario.id }}" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %} disabled/>
+                        </td>
+                        <td>
+                            <label class="visually-hidden" for="tecnico-{{ Usuario.id }}">Técnico</label><input id="tecnico-{{ Usuario.id }}" type="checkbox" name="tecnico" form="user-change-{{ Usuario.id }}" {% if Usuario.tecnico %}checked{% endif %} disabled/>
+                        </td>
+                        <td>{{ Usuario.last_login }}</td>
+
+                        <td>
+                            <button class="btn" type="submit" form="user-change-{{ Usuario.id }}" disabled><i class="fa-solid fa-pen"></i></button>
                         </td>
                         <td>
                             <form method="post" action="{% url 'eliminar_usuario' Usuario.id %}" onsubmit="return confirm('¿Estas seguro de borrar este usuario?')">
                                 {% csrf_token %}
-                                <button type="submit"><i class="fa-regular fa-trash-can"></i></button>
+                                <button class="btn" type="submit" disabled><i class="fa-regular fa-trash-can"></i></button>
                             </form>
                         </td>
+
+                        {% else %}
+
+                        <td>
+                            <label class="visually-hidden" for="activo-{{ Usuario.id }}">Cuenta activa</label><input id="activo-{{ Usuario.id }}" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %}/>
+                        </td>
+                        <td>
+                            <label class="visually-hidden" for="admin-{{ Usuario.id }}">Administrador</label><input id="admin-{{ Usuario.id }}" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %}/>
+                        </td>
+                        <td>
+                            <label class="visually-hidden" for="tecnico-{{ Usuario.id }}">Técnico</label><input id="tecnico-{{ Usuario.id }}" type="checkbox" name="tecnico" form="user-change-{{ Usuario.id }}" {% if Usuario.tecnico %}checked{% endif %}/>
+                        </td>
+
+                        <td>{{ Usuario.last_login }}</td>
+
+                        <td>
+                            <button class="btn" type="submit" form="user-change-{{ Usuario.id }}"><i class="fa-solid fa-pen"></i></button>
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'eliminar_usuario' Usuario.id %}" onsubmit="return confirm('¿Estas seguro de borrar este usuario?')">
+                                {% csrf_token %}
+                                <button class="btn" type="submit"><i class="fa-regular fa-trash-can"></i></button>
+                            </form>
+                        </td>
+                        {% endif %}
+
                     </tr>
+
                 {% empty %}
                     <tr><td colspan="10" class="users-empty">No hay usuarios para mostrar.</td></tr>
                 {% endfor %}
@@ -79,6 +102,5 @@
               </table>
         </div>
     {% endblock %}
-{% endif%}
 </body>
 </html>

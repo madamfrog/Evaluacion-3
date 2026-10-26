@@ -6,12 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Call Center Gamer - Inicio{% endblock %}</title>
+    <title>{% block title %}Call Center Library - Inicio{% endblock %}</title>
 
-
-    {% block links%}
-    <link rel="stylesheet" href="{% static 'gestion.css' %}">
-    {% endblock %}
 </head>
 
 <body>
@@ -57,9 +53,10 @@
 
     <!-- FELIPE: AGREGUE ESTA TABLA PARA LA GESTION DE PREGUNTAS -->
 
-    <h1 id="Titulo">Gestion de Preguntas</h1>
-    <div class="Container">
-        <table class="table">
+    <h1 class="text-center mt-5">Gestion de Preguntas</h1>
+
+    <div class="container mt-5">
+        <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th scope="col">id</th>
@@ -86,14 +83,14 @@
                     <td>{{ item.Fecha_creacion }}</td>
                     <td>{{ item.Usuario }}</td>
                     <td>
-                        <button id="btnModif" type="submit" form="user-change-{{ Usuario.id }}"><i
+                        <button class="btn" type="submit" form="user-change-{{ Usuario.id }}"><i
                                 class="fa-solid fa-pen"></i></button>
                     </td>
                     <td>
                         <form method="post" action="{% url 'borrar_pregunta' item.idPregunta %}"
                             onsubmit="return confirm('¿Estas seguro de borrar esta Pregunta?')">
                             {% csrf_token %}
-                            <button type="submit"><i class="fa-regular fa-trash-can"></i></button>
+                            <button class="btn" type="submit"><i class="fa-regular fa-trash-can"></i></button>
                         </form>
                     </td>
                 </tr>

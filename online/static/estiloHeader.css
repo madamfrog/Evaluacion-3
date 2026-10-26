@@ -22,110 +22,6 @@ main {
     width: 100%;
 }
 
-.MainNav {
-    height: 60px;
-    width: 100%;
-    background: linear-gradient(135deg, #4E31E1 0%, #673de6 100%);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    padding: 0 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-#logo {
-    margin-right: 30px;
-    text-decoration: none;
-    color: white;
-    font-weight: 700;
-    font-size: 1.2em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-#logo:hover {
-    color: #f8f9fa;
-}
-
-#NavbarIzq {
-    display: flex;
-    align-items: center;
-}
-
-#NavbarIzq ul {
-    display: flex;
-    list-style: none;
-    gap: 20px;
-}
-
-#NavbarIzq ul li a {
-    color: white;
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    font-size: 0.9em;
-}
-
-#NavbarIzq ul li a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #f8f9fa;
-}
-
-#NavbarDer {
-    display: flex;
-    align-items: center;
-}
-
-#NavbarDer ul {
-    display: flex;
-    list-style: none;
-    gap: 15px;
-    align-items: center;
-}
-
-#NavbarDer ul li a {
-    color: white;
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    font-size: 0.9em;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-#NavbarDer ul li a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #f8f9fa;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .MainNav {
-        padding: 0 10px;
-    }
-
-    #NavbarIzq ul {
-        gap: 10px;
-    }
-
-    #NavbarDer ul {
-        gap: 10px;
-    }
-
-    #logo {
-        font-size: 1em;
-    }
-}
-
 /* INICIO CSS INDEX */
 
 .Banner {
@@ -142,7 +38,7 @@ main {
 }
 
 .contLeft {
-    background-image: url('./img/gamer-sillon.png');
+    background-image: url('./img/educacion.png');
     width: 600px;
     height: 400px;
     margin-left: 100px;
