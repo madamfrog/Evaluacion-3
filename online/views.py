@@ -281,6 +281,7 @@ def CambioContrEmail(request: HttpRequest) -> HttpResponse:
 
 def CambioContr(request: HttpRequest) -> HttpResponse:
     datos: dict[str, Any] = {}
+    logger.info(request.POST)
 
     if request.method == "GET":
         token: str = request.GET.get("token", "")
@@ -291,13 +292,23 @@ def CambioContr(request: HttpRequest) -> HttpResponse:
         password: str = request.POST.get("password", "")
         confirmar_password: str = request.POST.get("confirmar_password", "")
 
+
+        logger.info(f"TOKEN:                {token}")
+        logger.info(f"PASSWORD:             {password}")
+        logger.info(f"CONFIRMAR PASSWORD:   {confirmar_password}")
+
         if len(password) < 8 or len(confirmar_password) < 8:
             datos["contraseñaError"] = "Las contraseñas debe ser mayor que 8 digitos"
+            datos["token"] = token
 
         elif password != confirmar_password:
             datos["contraseñaError"] = "Las contraseñas no son iguales"
+            datos["token"] = token
 
-        else:
+        elif    (len(password) >= 8 
+            and len(confirmar_password) >= 8 
+            and password == confirmar_password):
+
             usuario_cambiar: Usuario = get_object_or_404(Usuario, token=token)
 
             usuario_query: QuerySet[Usuario] = Usuario.objects.filter(
@@ -308,7 +319,8 @@ def CambioContr(request: HttpRequest) -> HttpResponse:
             if usuario_query.exists():
                 logger.info("usuario actualizado")
 
-                usuario_cambiar.password = make_password(password=password)
+                usuario_cambiar.password    = make_password(password=password)
+                usuario_cambiar.token_hasta = timezone.now()
                 usuario_cambiar.save()
                 return redirect("index")
 
@@ -316,6 +328,8 @@ def CambioContr(request: HttpRequest) -> HttpResponse:
                 logger.info("token vencido")
                 return redirect("index")
 
+        datos["token"] = token
+        logger.info("Cambio de contraseña Erroneo")
 
     return render(
         request       = request,

@@ -12,8 +12,9 @@
 <body>
     <nav class="MainNav">
         <div id="NavbarIzq">
-            <a href="{% if user.is_authenticated %}{% if user.admin or user.tecnico %}/Administracion/{% else %}/Inicio/{{ user.id }}/{% endif %}{% else %}/{% endif %}" id="logo">
-                <i class="fas fa-gamepad"></i> CallCenterGamer
+            <a href="{% if user.is_authenticated %}{% if user.admin or user.tecnico %}/Administracion/{% else %}/Inicio/{% endif %}{% else %}/{% endif %}" id="logo">
+                <i class="fas fa-gamepad"></i> 
+                CallCenterGamer
             </a>
             <ul>
                 {% if user.is_authenticated %}
