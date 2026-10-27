@@ -1,43 +1,44 @@
 {% extends "componentes/header.html" %}
 {% load static %}
-{% block links%}
-<link rel="stylesheet" href="{% static 'modificar.css' %}">
-{% endblock %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block title %} Modificar {% endblock %}
-</head>
+{% block title %}Modificar Pregunta - Call Center Library{% endblock %}
 
-<body>
-    {% block content %}
-
-    <!-- FELIPE: NO ES NECESARIO, ESTA LOGICA ESTA EN LAS VIEWS
-    {% if user.admin == False%}
-    {% if user.tecnico == True %}
-    <script>window.location.href = '/Administracion/';</script>
-    {% endif%}
-    <script>window.location.href = '/Inicio/{{ user.id }}';</script>
-    {% else %}
-    -->
-    <h1 id="TituloMod">Modificar pregunta</h1>
-    <div class="MainTodo">
-        <div class="MainPreguntar">
-            <div class="InsPreguntas">
-                <form method="post" action="{% url 'modificar_pregunta' pregunta.idPregunta %}">
-                    {{form}}
-                    {% csrf_token %}
-                    <input type="submit" value="Modificar pregunta">
-                </form>
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-purple">
+                <div class="card-header bg-purple text-white text-center">
+                    <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Modificar Pregunta</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'modificar_pregunta' pregunta.idPregunta %}">
+                        {% for field in form %}
+                            {% if field.is_hidden %}
+                                {{ field }}
+                            {% else %}
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-purple" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% csrf_token %}
+                        <div class="d-flex gap-2 mt-3">
+                            <button type="submit" class="btn btn-purple">
+                                <i class="fas fa-save me-2"></i>Modificar pregunta
+                            </button>
+                            <a href="/Administracion/" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    {% endif %}
-    {% endblock %}
-</body>
-
-</html>
+</div>
+{% endblock %}

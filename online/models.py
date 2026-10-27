@@ -120,7 +120,7 @@ class Preguntas(models.Model):
     Pregunta = models.TextField()
     Fecha_creacion = models.DateTimeField()
     Usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    categoria = models.CharField(max_length=50, default='otros', blank=True, null=True)
+    categoria = models.CharField(max_length=50, blank=True, null=True)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
     prioridad = models.CharField(max_length=20, choices=PRIORIDAD_CHOICES, default='media')
 

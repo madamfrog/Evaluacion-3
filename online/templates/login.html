@@ -1,37 +1,51 @@
 {% extends "componentes/header.html" %}
 {% load static %}
-{% block links%}
-<link rel="stylesheet" href="{% static 'login.css' %}">
-{% endblock %}
-<!DOCTYPE html>
-<html lang="en">
+{% block title %} Login {% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% block title %} Login {% endblock %}
-</head>
-
-<body>
-    {% block content %}
-    <div class="mainLogin">
-        {% if user.is_authenticated %}
-        <script>window.location.href = '/Inicio/{{ user.id }}';</script>
-        {% else %}
-        <h2>Iniciar sesión</h2>
-        <form id="Formulario" method="POST">
-            {{form}}
-            {% csrf_token %}
-            <input value="Iniciar Sesion" type="submit">
-        </form>
-        <p><a href="/cambio-contrasena-send-email/">He olvidado mi contraseña </a></p>
-        <p>¿Aun no tienes cuenta? <a href="/Register/">Registrate ya!</a></p>
-        {% endif %}
+{% block content %}
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 60vh;">
+    <div class="row w-100 justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-purple">
+                <div class="card-header bg-purple text-white text-center">
+                    <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Iniciar sesión</h4>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <script>window.location.href = '/Inicio/';</script>
+                    {% else %}
+                    <form id="Formulario" method="POST">
+                        {% for field in form %}
+                            {% if field.field.widget.input_type == 'checkbox' %}
+                            <div class="form-check mb-2">
+                                {{ field }}
+                                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                            {% else %}
+                            <div class="mb-2">
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-purple w-100 mt-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="mb-2"><a href="/cambio-contrasena-send-email/" class="text-purple">He olvidado mi contraseña</a></p>
+                        <p class="mb-0">¿Aún no tienes cuenta? <a href="/Register/" class="text-purple fw-bold">Regístrate ya!</a></p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-    {% endblock %}
-
-</body>
-
-</html>
+</div>
+{% endblock %}

@@ -1,72 +1,83 @@
 {% extends "componentes/header.html" %}
 {% load static %}
-{% block links%}
-<link rel="stylesheet" href="{% static 'inicio.css' %}">
+{% block title %} Inicio {% endblock %}
+
+{% block links %} 
+<link href="{% static 'inicio.css' %}" rel="stylesheet">
 {% endblock %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block title %} Inicio {% endblock %}
-</head>
+{% block content %}
 
-<body>
-    {% block content %}
-    <div class="MainTodo">
-        <div class="MainPreguntar">
-            <div class="InsPreguntas">
-                <form method="post">
-                    {{form}}
-                    {% csrf_token %}
-                    <input type="submit" value="Insertar pregunta">
-                </form>
+<div class="container-fluid py-4">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div id="crear-pregunta" class="card card-purple mb-4">
+                <div class="card-header bg-purple text-white">
+                    <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Crear Pregunta</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% for field in form %}
+                            {% if field.is_hidden %}
+                                {{ field }}
+                            {% else %}
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-purple" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-purple mt-3">
+                            <i class="fas fa-plus me-2"></i>Insertar pregunta
+                        </button>
+                    </form>
+                </div>
             </div>
 
-            <div class="asistente-ia">
-                <h3>
-                    <i class="fas fa-robot"></i> Asistente Virtual IA
-                </h3>
-                <form method="get" action="">
-                    <div class="search-group">
-                        <input type="text" name="buscar_ayuda" placeholder="¿En qué puedo ayudarte? Ej: problema con internet, juego lento..."
+            <div class="ai-assistant p-4 mb-4">
+                <h4 class="mb-3">
+                    <i class="fas fa-robot me-2"></i> Asistente Virtual IA
+                </h4>
+                <form method="get" action="" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="buscar_ayuda" placeholder="¿En qué puedo ayudarte? Ej: Recomendaciones de libros, dudas de literatura..."
                                value="{{ request.GET.buscar_ayuda|default:'' }}">
-                        <button type="submit">
-                            <i class="fas fa-search"></i> Buscar
+                        <button type="submit" class="btn btn-dark text-white buscar">
+                            <i class="fas fa-search me-2"></i>Buscar
                         </button>
                     </div>
                 </form>
-                <p>
-                    Nuestra IA puede ayudarte con problemas de hardware, software, conexión y más.
+                <p class="mb-3 small">
+                    Nuestra IA puede ayudarte con problemas de recomendaciones, dudas, análisis y más.
                 </p>
 
-                <!-- Bloque de Política de Privacidad de IA -->
-                <div class="privacidad-box">
-                    <i class="fas fa-shield-alt"></i> <strong>Privacidad de IA:</strong> Las consultas enviadas son procesadas únicamente para responder a tus dudas y no se comparten datos personales confidenciales. 
-                    <button type="button" onclick="document.getElementById('modal-privacidad-ia').style.display='block'" class="btn-link-privacidad">
+                <div class="border-top border-light pt-3 small">
+                    <i class="fas fa-shield-alt me-2"></i> <strong>Privacidad de IA:</strong> Las consultas enviadas son procesadas únicamente para responder a tus dudas y no se comparten datos personales confidenciales. 
+                    <button type="button" onclick="document.getElementById('modal-privacidad-ia').style.display='block'" class="btn btn-link text-warning ps-1 pe-1 ms-1 text-decoration-underline">
                         Ver política completa
                     </button>
                 </div>
             </div>
 
-            <!-- Modal Informativo de Privacidad -->
             <div id="modal-privacidad-ia" class="modal-privacidad">
                 <div class="modal-contenido">
-                    <h3>
-                        <i class="fas fa-user-shield"></i> Política de Privacidad del Uso de IA
-                    </h3>
+                    <h4 class="text-purple mb-3">
+                        <i class="fas fa-user-shield me-2"></i> Política de Privacidad del Uso de IA
+                    </h4>
                     <p>
                         En Call Center Library nos tomamos en serio tu privacidad. Al utilizar nuestro Asistente Virtual basado en Inteligencia Artificial:
                     </p>
                     <ul>
                         <li>Tus mensajes se procesan exclusivamente para generar soluciones y recomendaciones técnicas.</li>
-                        <li>No transmitimos contraseñas, datos bancarios ni información personal sensible a los modelos de lenguaje.</li>
+                        <li>No transmitimos contraseñas, datos bancarios ni información personal sensibles a los modelos de lenguaje.</li>
                         <li>El historial de consultas se utiliza únicamente para el seguimiento de tickets dentro del soporte del sitio.</li>
                     </ul>
-                    <div class="modal-footer">
-                        <button type="button" onclick="document.getElementById('modal-privacidad-ia').style.display='none'" class="btn-entendido">
+                    <div class="text-end">
+                        <button type="button" onclick="document.getElementById('modal-privacidad-ia').style.display='none'" class="btn btn-purple">
                             Entendido
                         </button>
                     </div>
@@ -74,66 +85,86 @@
             </div>
 
             {% if sugerencias_ia %}
-            <div class="resultados-ia">
-                <h4>
-                    <i class="fas fa-lightbulb"></i> Sugerencias para: "{{ sugerencias_ia.consulta_original }}"
-                </h4>
-                <div class="respuesta-ia">
-                    <div class="respuesta-header">
-                        <i class="fas fa-robot icon-color-purple"></i>
-                        <strong class="strong-color">Respuesta Automática:</strong>
-                    </div>
-                    <div class="respuesta-texto">
-                        {{ sugerencias_ia.respuesta_automatica }}
-                    </div>
+            <div class="card card-purple mb-4">
+                <div class="card-header bg-purple text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i> Sugerencias para: "{{ sugerencias_ia.consulta_original }}"
+                    </h5>
                 </div>
-                {% if sugerencias_ia.recomendaciones %}
-                <div class="recomendaciones-ia">
-                    <div class="recomendaciones-header">
-                        <i class="fas fa-star icon-color-yellow"></i>
-                        <strong class="strong-color">Preguntas Similares Resueltas:</strong>
-                    </div>
-                    {% for rec in sugerencias_ia.recomendaciones %}
-                    <div class="rec-item">
-                        <div class="rec-item-header strong-color">
-                            <strong class="strong-rect-item-header">{{ rec.pregunta_similar }}</strong>
-                            <span class="badge-similitud">Similitud: {{ rec.similitud }}</span>
+                <div class="card-body">
+                    <div class="alert" style="background: linear-gradient(90deg, #f3f0ff 0%, #e9ecef 100%); border-left: 4px solid #6f42c1;">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-robot text-purple me-2"></i>
+                            <strong class="text-purple">Respuesta Automática:</strong>
                         </div>
-                        <p class="rec-texto">{{ rec.respuesta }}</p>
-                        {% if rec.categoria %}
-                        <div class="rec-categoria-wrap"><span class="badge-categoria">{{ rec.categoria }}</span></div>
-                        {% endif %}
+                        <p class="mb-0">{{ sugerencias_ia.respuesta_automatica }}</p>
+                    </div>
+                    
+                    {% if sugerencias_ia.recomendaciones %}
+                    <h6 class="text-purple mt-4 mb-3">
+                        <i class="fas fa-star text-warning me-2"></i> Preguntas Similares Resueltas:
+                    </h6>
+                    {% for rec in sugerencias_ia.recomendaciones %}
+                    <div class="card mb-3" style="border-left: 3px solid #6f42c1;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <strong class="text-purple">{{ rec.pregunta_similar }}</strong>
+                                <span class="badge" style="background-color: #6f42c1;">Similitud: {{ rec.similitud }}</span>
+                            </div>
+                            <p class="mb-2">{{ rec.respuesta }}</p>
+                            {% if rec.categoria %}
+                            <span class="badge bg-secondary">{{ rec.categoria }}</span>
+                            {% endif %}
+                        </div>
                     </div>
                     {% endfor %}
-                </div>
-                {% else %}
-                <div class="sin-resultados">
-                    <i class="fas fa-info-circle"></i>
-                    <p>No se encontraron preguntas similares en nuestra base de datos.</p>
-                </div>
-                {% endif %}
-                <div class="btn-crear-wrap">
-                    <a href="?buscar_ayuda={{ sugerencias_ia.consulta_original|urlencode }}" class="btn-crear-pregunta">
-                        <i class="fas fa-question-circle"></i> Crear pregunta sobre este tema
-                    </a>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No se encontraron preguntas similares en nuestra base de datos.
+                    </div>
+                    {% endif %}
+                    <div class="text-center mt-3">
+                        <a href="#crear-pregunta" class="btn btn-purple">
+                            <i class="fas fa-question-circle me-2"></i> Crear pregunta sobre este tema
+                        </a>
+                    </div>
                 </div>
             </div>
             {% endif %}
-            <div style="height: 10rem;"></div>
         </div>
 
-        <div class="MainPreguntas">
-            <div id="Titulo"><h2>Historial de tus preguntas</h2></div>
-            {% for pregunta in Preguntas %}
-            <div class="Preguntas">
-                <a href="/Respuesta/{{ user.id }}/{{pregunta.idPregunta}}">
-                    <h1>Titulo: {{pregunta.Titulo}}</h1>
-                    <h4>{{pregunta.Fecha_creacion}}</h4>
-                </a>
+        <div class="col-lg-5">
+            <div class="card card-purple">
+                <div class="card-header bg-purple text-white text-center">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historial de tus preguntas</h5>
+                </div>
+                <div class="card-body p-2" style="max-height: 600px; overflow-y: auto;">
+                    {% for pregunta in Preguntas %}
+                    <a href="/Respuesta/{{ user.id }}/{{pregunta.idPregunta}}" class="text-decoration-none">
+                        <div class="card mb-2 pregunta-card">
+                            <div class="card-body py-2 px-3">
+                                <h6 class="text-purple mb-1">{{pregunta.Titulo}}</h6>
+                                <small class="text-muted">{{pregunta.Fecha_creacion}}</small>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% if not Preguntas %}
+                    <p class="text-center text-muted py-3">No hay preguntas aún</p>
+                    {% endif %}
+                </div>
             </div>
-            {% endfor %}
         </div>
     </div>
-    {% endblock %}
-</body>
-</html>
+</div>
+
+<script>
+    window.onclick = function(event) {
+        var modal = document.getElementById('modal-privacidad-ia');
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

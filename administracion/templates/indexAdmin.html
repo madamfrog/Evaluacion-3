@@ -1,109 +1,63 @@
 {% extends "componentes/header.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Call Center Library - Inicio{% endblock %}</title>
+{% block title %}Gestión de Preguntas - Call Center Library{% endblock %}
 
-</head>
-
-<body>
-    {% block content %}
-    <!--
-        FELIPE: No es necesario, ya que, se redirecciona en las views
-    {% if user.is_authenticated %}
-        {% if not user.admin and not user.tecnico %}
-        <script>window.location.href = '/Inicio/{{ user.id }}/';</script>
-        {% endif %}
-    {% endif %}
-    -->
-
-    <!--
-        FELIPE: No es necesario, ya que, el usuario si o si está autentificado
-    <div class="Banner">
-        <div class="contLeft"></div>
-        <div class="contRight">
-            <h1>Bienvenido a Call of Gamers!</h1>
-            <p>Comunicate con el mejor call center gamer, nosotros te brindaremos la solución necesaria para tu problema, no dudes más!</p>
-            <div class="contBtn">
-                <button id="btnIngresar" onclick="window.location.href = '/Login/'">Ingresar</button>
-            </div>
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="text-center text-purple"><i class="fas fa-question-circle me-2"></i>Gestión de Preguntas</h1>
         </div>
     </div>
 
-    <div class="mainCard">
-        <div class="iCard"></div>
-        <div class="dCard">
-            <h1>Atención 24/7</h1>
-            <p>Comunicate con el mejor call center gamer, nosotros te brindaremos la solución necesaria para tu problema, no dudes más!</p>
+    <div class="card card-purple">
+        <div class="card-body p-0">
+            <table class="table table-striped table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Título</th>
+                        <th scope="col">Pregunta</th>
+                        <th scope="col">Fecha Creación</th>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Categoria IA</th>
+                        <th scope="col" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in preguntas %}
+                    <tr>
+                        <th scope="row">{{ item.idPregunta }}</th>
+                        <td>{{ item.Titulo }}</td>
+                        <td>{{ item.Pregunta|truncatechars:60 }}</td>
+                        <td>{{ item.Fecha_creacion }}</td>
+                        <td>{{ item.Usuario }}</td>
+                        <td>{{ item.categoria }}</td>
+                        <td class="text-center">
+                            <form method="post" action="{% url 'modificar_pregunta' item.idPregunta %}" class="d-inline">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-primary" type="submit" title="Modificar">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'borrar_pregunta' item.idPregunta %}" 
+                                onsubmit="return confirm('¿Estas seguro de borrar esta Pregunta?')" class="d-inline">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-danger" type="submit" title="Eliminar">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="999" class="text-center py-4 text-muted">No hay preguntas para mostrar.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-
-    <div class="finalBody">
-        <h1>Comunicate con nosotros</h1>
-        <p>Escribenos y nuestros profesionales solucionaran tu problema en tan solo un momento!</p>
-        <div class="contBtn" style="margin-top: 65px;">
-            <button id="btnIngresar" onclick="window.location.href = '/Login/'">Ingresar</button>
-        </div>
-    </div>
-    -->
-
-    <!-- FELIPE: AGREGUE ESTA TABLA PARA LA GESTION DE PREGUNTAS -->
-
-    <h1 class="text-center mt-5">Gestion de Preguntas</h1>
-
-    <div class="container mt-5">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">id</th>
-                    <th scope="col">Titulo</th>
-                    <th scope="col">Pregunta</th>
-                    <th scope="col">Fecha Creación</th>
-                    <th scope="col">Usuario</th>
-                    <th scope="col"></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in preguntas %}
-                <tr>
-                    <th scope="row">{{ item.idPregunta }}</th>
-                    <td>
-                        {{ item.Titulo }}
-                        <form id="user-change-{{ Usuario.id }}" method="post"
-                            action="{% url 'modificar_pregunta' item.idPregunta %}">
-                            {% csrf_token %}
-                        </form>
-                    </td>
-                    <td>{{ item.Pregunta }}</td>
-                    <td>{{ item.Fecha_creacion }}</td>
-                    <td>{{ item.Usuario }}</td>
-                    <td>
-                        <button class="btn" type="submit" form="user-change-{{ Usuario.id }}"><i
-                                class="fa-solid fa-pen"></i></button>
-                    </td>
-                    <td>
-                        <form method="post" action="{% url 'borrar_pregunta' item.idPregunta %}"
-                            onsubmit="return confirm('¿Estas seguro de borrar esta Pregunta?')">
-                            {% csrf_token %}
-                            <button class="btn" type="submit"><i class="fa-regular fa-trash-can"></i></button>
-                        </form>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="10" class="users-empty">No hay preguntas para mostrar.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    {% endblock %}
-</body>
-
-</html>
+</div>
+{% endblock %}

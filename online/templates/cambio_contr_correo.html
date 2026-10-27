@@ -5,15 +5,25 @@
 
 {% block content %}
 
-<div class="container d-flex flex-column justify-content-center align-items-center" style="height: 30rem;">
-  <h1 class="text-center">Cambio de Contraseña</h1>
-  <form class="mt-5 w-50" method="post" action="{% url 'password-reset-email' %}">
-    {% csrf_token %}
-    <div>
-      <label for="correo" class="form-label">Correo de verificación</label>
-      <input class="form-control" id="correo" type="email" placeholder="Ingrese el correo" name="correo" required/>
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 60vh;">
+  <div class="card card-purple w-100" style="max-width: 480px;">
+    <div class="card-header bg-purple text-white text-center">
+      <h4 class="mb-0"><i class="fas fa-envelope me-2"></i>Cambio de Contraseña</h4>
     </div>
-  </form>
+    <div class="card-body">
+      <p class="text-muted text-center mb-4">Ingresa el correo asociado a tu cuenta para recibir el enlace de recuperación.</p>
+      <form method="post" action="{% url 'password-reset-email' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="correo" class="form-label fw-semibold text-purple">Correo de verificación</label>
+          <input class="form-control" id="correo" type="email" placeholder="Ingrese el correo" name="correo" required/>
+        </div>
+        <button type="submit" class="btn btn-purple w-100">
+          <i class="fas fa-paper-plane me-2"></i>Enviar enlace
+        </button>
+      </form>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

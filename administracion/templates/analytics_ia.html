@@ -1,56 +1,77 @@
 {% extends "componentes/header.html" %}
 {% load static %}
 
-{% block title %}Analytics con IA{% endblock %}
-
-{% block links %}
-<link rel="stylesheet" href="{% static 'analytics.css' %}">
-{% endblock %}
+{% block title %}Analytics con IA - Call Center Library{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>🧠 Analytics con Inteligencia Artificial</h1>
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="text-center text-purple"><i class="fas fa-brain me-2"></i>Analytics con Inteligencia Artificial</h1>
+        </div>
+    </div>
     
-    <div class="dashboard">
-        <!-- Métricas Principales -->
-        <div class="metricas-grid">
-            <div class="metrica-card">
-                <h3>📊 Preguntas este Mes</h3>
-                <p class="numero">{{ analytics_data.total_preguntas_mes }}</p>
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card card-purple text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-purple"><i class="fas fa-chart-bar me-2"></i>Preguntas este Mes</h5>
+                    <h2 class="text-purple fw-bold">{{ analytics_data.total_preguntas_mes }}</h2>
+                </div>
             </div>
-            <div class="metrica-card">
-                <h3>⏱️ Preguntas sin Respuesta</h3>
-                <p class="numero">{{ analytics_data.preguntas_sin_respuesta }}</p>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-purple text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-purple"><i class="fas fa-clock me-2"></i>Preguntas sin Respuesta</h5>
+                    <h2 class="text-warning fw-bold">{{ analytics_data.preguntas_sin_respuesta }}</h2>
+                </div>
             </div>
-            <div class="metrica-card">
-                <h3>⚡ Tiempo Promedio Respuesta</h3>
-                <p class="numero">{{ analytics_data.tiempo_promedio_respuesta }}</p>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-purple text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-purple"><i class="fas fa-bolt me-2"></i>Tiempo Promedio Respuesta</h5>
+                    <h2 class="text-success fw-bold">{{ analytics_data.tiempo_promedio_respuesta }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card card-purple h-100">
+                <div class="card-header bg-purple text-white">
+                    <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Tendencias por Categoría (IA)</h5>
+                </div>
+                <div class="card-body">
+                    {% for categoria, cantidad in analytics_data.categorias_tendencia.items %}
+                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background-color: #f3f0ff;">
+                        <span class="fw-bold text-purple">{{ categoria|title }}</span>
+                        <span class="badge" style="background-color: #6f42c1;">{{ cantidad }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No hay datos disponibles</p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 
-        <!-- Tendencias por Categoría -->
-        <div class="categorias-section">
-            <h3>🎯 Tendencias por Categoría (IA)</h3>
-            <div class="categorias-grid">
-                {% for categoria, cantidad in analytics_data.categorias_tendencia.items %}
-                <div class="categoria-card">
-                    <span class="categoria-nombre">{{ categoria|title }}</span>
-                    <span class="categoria-cantidad">{{ cantidad }}</span>
+        <div class="col-lg-6">
+            <div class="card card-purple h-100">
+                <div class="card-header bg-purple text-white">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Usuarios Más Activos</h5>
                 </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Usuarios Más Activos -->
-        <div class="usuarios-section">
-            <h3>👥 Usuarios Más Activos</h3>
-            <div class="usuarios-list">
-                {% for usuario in analytics_data.usuarios_activos %}
-                <div class="usuario-card">
-                    <span>{{ usuario.usuario }}</span>
-                    <span class="preguntas-count">{{ usuario.num_preguntas }} preguntas</span>
+                <div class="card-body">
+                    {% for usuario in analytics_data.usuarios_activos %}
+                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background-color: #f3f0ff;">
+                        <span class="fw-bold text-purple">{{ usuario.usuario }}</span>
+                        <span class="badge bg-success">{{ usuario.num_preguntas }} preguntas</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No hay datos disponibles</p>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </div>
     </div>

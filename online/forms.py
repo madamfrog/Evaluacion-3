@@ -36,20 +36,20 @@ def validar_rut_chileno(rut_str: str) -> str | bool:
 class RegisterForm(forms.ModelForm):
     password = forms.CharField(
         label='',
-        widget=forms.PasswordInput(attrs={'placeholder': 'Contraseña'})
+        widget=forms.PasswordInput(attrs={'placeholder': 'Contraseña', 'class': 'form-control'})
     )
     password_2 = forms.CharField(
         label='',
-        widget=forms.PasswordInput(attrs={'placeholder': 'Confirmar contraseña'})
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirmar contraseña', 'class': 'form-control'})
     )
 
     class Meta:
         model = Usuario
         fields = ['usuario', 'correo', 'rut']
         widgets = {
-            'correo': forms.EmailInput(attrs={'placeholder': 'Ingrese su correo'}),
-            'usuario': forms.TextInput(attrs={'placeholder': 'Ingrese su usuario'}),
-            'rut': forms.TextInput(attrs={'placeholder': 'Ingrese su rut'})
+            'correo': forms.EmailInput(attrs={'placeholder': 'Ingrese su correo', 'class': 'form-control'}),
+            'usuario': forms.TextInput(attrs={'placeholder': 'Ingrese su usuario', 'class': 'form-control'}),
+            'rut': forms.TextInput(attrs={'placeholder': 'Ingrese su rut', 'class': 'form-control'})
         }
 
     def clean_correo(self):
@@ -101,27 +101,29 @@ class LoginForm(forms.Form):
     Usuario = forms.CharField(
         label='',
         max_length=63,
-        widget=forms.TextInput(attrs={'placeholder': 'Ingrese su usuario'})
+        widget=forms.TextInput(attrs={'placeholder': 'Ingrese su usuario', 'class': 'form-control'})
     )
     password = forms.CharField(
         label='',
         max_length=63,
-        widget=forms.PasswordInput(attrs={'placeholder': 'Ingrese su contraseña'})
+        widget=forms.PasswordInput(attrs={'placeholder': 'Ingrese su contraseña', 'class': 'form-control'})
     )
     remember_me = forms.BooleanField(
         label='Recordar contraseña',
-        required=False
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
 
 class PreguntasForm(forms.ModelForm):
     class Meta:
         model = Preguntas
-        fields = ['Titulo', 'Pregunta', 'Usuario', 'Fecha_creacion']
+        fields = ['Titulo', 'Pregunta', 'Usuario', 'Fecha_creacion', 'categoria']
         widgets = {
-            'Titulo': forms.TextInput(attrs={'placeholder': 'Título de la pregunta'}),
-            'Pregunta': forms.Textarea(attrs={'placeholder': 'Escriba su pregunta aquí...'}),
+            'Titulo': forms.TextInput(attrs={'placeholder': 'Título de la pregunta', 'class': 'form-control'}),
+            'Pregunta': forms.Textarea(attrs={'placeholder': 'Escriba su pregunta aquí...', 'class': 'form-control', 'rows': 4}),
             'Usuario': forms.HiddenInput(),
             'Fecha_creacion': forms.HiddenInput(),
+            'categoria': forms.HiddenInput(),
         }
 
 class RespuestaForm(forms.ModelForm):
@@ -130,7 +132,7 @@ class RespuestaForm(forms.ModelForm):
         fields = ['Respuesta', 'id_Pregunta', 'Usuario', 'FechaHora']
         widgets = {
             'Respuesta': forms.Textarea(
-                attrs={'placeholder': 'Enviar mensaje...', 'maxlength': '200', 'rows': 3}),
+                attrs={'placeholder': 'Enviar mensaje...', 'maxlength': '200', 'rows': 2, 'class': 'form-control'}),
             'id_Pregunta': forms.HiddenInput(),
             'Usuario': forms.HiddenInput(),
             'FechaHora': forms.HiddenInput(),

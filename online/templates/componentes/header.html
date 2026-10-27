@@ -7,24 +7,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>{% block title %}Call Center Library{% endblock %}</title>
 
-    <link rel="stylesheet" href="{% static 'estiloHeader.css' %}">
+    <!-- Bootstrap v5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
-    <!-- FELIPE: BOOTSTRAP v5.3 -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
+    <link href="{% static 'main.css'%}" rel="stylesheet">
 
     {% block links %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% if user.is_authenticated %}{% if user.admin or user.tecnico %}/Administracion/{% else %}/Inicio/{% endif %}{% else %}/{% endif %}" id="logo">
+            <a class="navbar-brand" href="{% if user.is_authenticated %}{% if user.admin or user.tecnico %}/Administracion/{% else %}/Inicio/{% endif %}{% else %}/{% endif %}">
             <i class="fa-brands fa-leanpub"></i>
                 CallCenterLibrary
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-items">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-items" aria-controls="navbar-items" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -58,11 +57,13 @@
                 </ul>
 
                 {% if user.is_authenticated %}
-                    <i class="fas fa-user me-1"></i> {{ user.usuario }}
+                    <span class="text-white me-2">
+                        <i class="fas fa-user me-1"></i> {{ user.usuario }}
+                    </span>
                     {% if user.admin %}
-                        <span class="bg-danger text-light rounded rounded-1 ps-1 pe-1 ms-1">Admin</span>
+                        <span class="badge bg-danger me-2">Admin</span>
                     {% elif user.tecnico %}
-                        <span class="bg-primary text-light rounded rounded-1 ps-1 pe-1 ms-1">Técnico</span>
+                        <span class="badge bg-info me-2">Técnico</span>
                     {% endif %}
                 {% endif %}
 
@@ -70,9 +71,9 @@
 
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <form method="post" action="{% url 'Logout' %}" class="logout-form">
+                            <form method="post" action="{% url 'Logout' %}" class="d-inline">
                                 {% csrf_token %}
-                                <button type="submit" class="btn">
+                                <button type="submit" class="btn btn-link nav-link">
                                     <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                                 </button>
                             </form>

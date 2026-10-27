@@ -30,6 +30,12 @@ def Index(request: HttpRequest) -> HttpResponse:
     """
     Página principal del sitio
     """
+
+    usuario: object = request.user
+
+    if not usuario.is_anonymous:
+        return redirect("/Inicio/")
+
     return render(request, "index.html")
 
 
@@ -79,32 +85,40 @@ def Inicio(request: HttpRequest) -> HttpResponse:
                     response_post["Pregunta"]
                 )
 
+                response_post["categoria"] = asistente.clasificar_pregunta(
+                    response_post["Pregunta"]
+                )
+
+
             except Exception as e:
                 logger.error("Error al clasificar categoría: %s", e)
                 response_post["categoria"] = "general"
 
+            logger.info(response_post)
             formulario_preguntas = PreguntasForm(response_post)
             formulario_preguntas.save()
             return redirect("/Inicio/")
 
-    query_ia = request.GET.get("buscar_ayuda", "").strip()
+    query_ia: str | None = request.GET.get("buscar_ayuda", None)
+    sugerencias_ia: dict[Any, Any] | None = None
 
     # Guarda la búsqueda del asistente virtual
-    sugerencias_ia: dict[Any, Any] = {
-        "consulta_original": query_ia,
-        "respuesta_automatica": "Lo sentimos, el asistente virtual no se encuentra disponible en este momento. Inténtalo más tarde.",
-        "recomendaciones": [],
-    }
-
     if query_ia:
+        query_ia_formateado: str = query_ia.strip()
+        sugerencias_ia = {
+            "consulta_original": query_ia_formateado,
+            "respuesta_automatica": "Lo sentimos, el asistente virtual no se encuentra disponible en este momento. Inténtalo más tarde.",
+            "recomendaciones": [],
+        }
+
         logger.info("GENERANDO RESPUESTA AUTOMATICA")
-        respuesta_automatica: str = obtener_respuesta_ia(query_ia)
+        respuesta_automatica: str = obtener_respuesta_ia(query_ia_formateado)
 
         logger.info("GENERANDO RECOMENDACIONES")
-        recomendaciones_ia: list[str] = obtener_recomendaciones_ia(query_ia)
+        recomendaciones_ia: list[str] = obtener_recomendaciones_ia(query_ia_formateado)
 
         sugerencias_ia = {
-            "consulta_original": query_ia,
+            "consulta_original": query_ia_formateado,
             "respuesta_automatica": respuesta_automatica,
             "recomendaciones": recomendaciones_ia,
         }
@@ -259,7 +273,6 @@ def CambioContrEmail(request: HttpRequest) -> HttpResponse:
         usuario.save()
 
         logger.info("Token agregado y fecha de vencimiento")
-
         logger.info("Correo Confirmado")
 
         logger.info("Enviando Correo")
@@ -267,9 +280,10 @@ def CambioContrEmail(request: HttpRequest) -> HttpResponse:
             template_name='email.html',
             context={"link": f"http://localhost:8000/cambio-contrasena/?token={token_uuid}"},
         )
-        logger.info("HTML Creado")
 
+        logger.info("HTML Creado")
         logger.info("Creando Mensaje")
+
         message_email = EmailMultiAlternatives(
             subject="Cambio de Contraseña",
             body="Sí usted cree que esto fue una equivocación, por favor ignore este mensaje.",
@@ -277,13 +291,19 @@ def CambioContrEmail(request: HttpRequest) -> HttpResponse:
             to=[correo],
             headers={},
         )
-        logger.info("Mensaje Creado")
 
+        logger.info("Mensaje Creado")
         logger.info("Adjuntando Alternativas")
+
         message_email.attach_alternative(content=contenido_HTML, mimetype="text/html")
+
         logger.info("Tratando de enviar Correo")
+
         message_email.send()
+
         logger.info("Correo Enviado")
+
+        return redirect("inicio")
 
     return render(
         request       = request,
@@ -328,16 +348,16 @@ def CambioContr(request: HttpRequest) -> HttpResponse:
             )
 
             if usuario_query.exists():
-                logger.info("usuario actualizado")
+                logger.info("Usuario actualizado")
 
                 usuario_cambiar.password    = make_password(password=password)
                 usuario_cambiar.token_hasta = timezone.now()
                 usuario_cambiar.save()
-                return redirect("index")
+                return redirect("inicio")
 
             else:
                 logger.info("token vencido")
-                return redirect("index")
+                return redirect("inicio")
 
         datos["token"] = token
         logger.info("Cambio de contraseña Erroneo")

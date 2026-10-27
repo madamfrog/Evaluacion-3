@@ -1,23 +1,41 @@
 {% extends "componentes/header.html" %}
 {% load static %}
-{% block links%}
-<link rel="stylesheet" href="{% static 'register.css' %}">
-{% endblock %}
 {% block title %} Registrarse {% endblock %}
 
 {% block content %}
-<div class="MainRegister">
-    {% if user.is_authenticated %}
-    <script>window.location.href = '/Inicio/';</script>
-    {% else %}
-    <h2>Registrarse</h2>
-    <form id="Formulario" method="POST">
-        {{form}}
-        {% csrf_token %}
-        <input value="Registrarse" type="submit">
-    </form>
-    <p>¿Ya tienes cuenta? <a href="/Login/">Ingresa ya!</a></p>
-    {% endif %}
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 60vh;">
+    <div class="row w-100 justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-purple">
+                <div class="card-header bg-purple text-white text-center">
+                    <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Registrarse</h4>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <script>window.location.href = '/Inicio/';</script>
+                    {% else %}
+                    <form id="Formulario" method="POST">
+                        {% for field in form %}
+                            <div class="mb-2">
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-purple w-100 mt-3">
+                            <i class="fas fa-user-plus me-2"></i>Registrarse
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="mb-0">¿Ya tienes cuenta? <a href="/Login/" class="text-purple fw-bold">Ingresa ya!</a></p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

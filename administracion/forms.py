@@ -2,12 +2,16 @@ from django import forms
 from online.models import Usuario
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 class UserAdminCreationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    password_2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password_2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Usuario
         fields = ['usuario','correo']
+        widgets = {
+            'usuario': forms.TextInput(attrs={'class': 'form-control'}),
+            'correo': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
 
     def clean(self):
         cleaned_data = super().clean()

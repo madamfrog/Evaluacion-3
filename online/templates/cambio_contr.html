@@ -5,12 +5,29 @@
 
 {% block content %}
 
-<form method="post" action="{% url 'password-reset' %}">
-  {% csrf_token %}
-  <input type="text" placeholder="Nueva contraseña" name="password">
-  <input type="text" placeholder="Confirme la contraseña" name="confirmar_password">
-  <button type="submit">Confimar</button>
-  <input type="hidden" value="{{ token }}" name="token">
-</form>
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 60vh;">
+  <div class="card card-purple w-100" style="max-width: 420px;">
+    <div class="card-header bg-purple text-white text-center">
+      <h4 class="mb-0"><i class="fas fa-key me-2"></i>Cambio de Contraseña</h4>
+    </div>
+    <div class="card-body">
+      <form method="post" action="{% url 'password-reset' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="password" class="form-label fw-semibold text-purple">Nueva contraseña</label>
+          <input type="text" class="form-control" id="password" placeholder="Nueva contraseña" name="password">
+        </div>
+        <div class="mb-3">
+          <label for="confirmar_password" class="form-label fw-semibold text-purple">Confirme la contraseña</label>
+          <input type="text" class="form-control" id="confirmar_password" placeholder="Confirme la contraseña" name="confirmar_password">
+        </div>
+        <button type="submit" class="btn btn-purple w-100">
+          <i class="fas fa-check me-2"></i>Confirmar
+        </button>
+        <input type="hidden" value="{{ token }}" name="token">
+      </form>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

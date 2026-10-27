@@ -1,41 +1,49 @@
 {% extends "componentes/header.html" %}
 {% load static %}
 
-{% block title %}Inicio{% endblock %}
+{% block title %}Inicio - Call Center Library{% endblock %}
 
 {% block content %}
-    {% if user.is_authenticated %}
-        {% if user.admin or user.tecnico %}
-            <script>window.location.href = '/Administracion/';</script>
-        {% else %}
-            <script>window.location.href = '/Inicio/';</script>
-        {% endif %}
-    {% endif %}
-
-    <div class="Banner">
-        <div class="contLeft"></div>
-        <div class="contRight">
-            <h1>Bienvenido a Call of Readers!</h1>
-            <p>Comunicate con el mejor call center library, nosotros te brindaremos la solución necesaria para tu problema, no dudes más!</p>
-            <div class="contBtn">
-                <button id="btnIngresar" onclick="window.location.href = '/Login/'">Ingresar</button>
+    <div style="background: linear-gradient(135deg, #4E31E1 0%, #6f42c1 100%); color: white; padding: 4rem 0;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="text-center">
+                        <i class="fas fa-headset" style="font-size: 8rem; opacity: 0.9;"></i>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center text-lg-start">
+                    <h1 class="display-4 fw-bold mb-3">Bienvenido a Call Center Library</h1>
+                    <p class="lead mb-4">Comunícate con el mejor call center, nosotros te brindaremos la solución necesaria para tu problema, ¡no dudes más!</p>
+                    <a href="/Login/" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+                    </a>
+                </div>
             </div>
         </div>
     </div>
     
-    <div class="mainCard">
-        <div class="iCard"></div>
-        <div class="dCard">
-            <h1>Atención 24/7</h1>
-            <p>Comunicate con el mejor call center library, nosotros te brindaremos la solución necesaria para tu problema, no dudes más!</p>
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="text-center">
+                    <i class="fas fa-clock" style="font-size: 6rem; color: #6f42c1;"></i>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center text-lg-start">
+                <h2 class="text-purple fw-bold mb-3">Atención 24/7</h2>
+                <p class="lead">Comunícate con nuestros profesionales y te brindaremos la solución necesaria para tu problema en cualquier momento.</p>
+            </div>
         </div>
     </div>
     
-    <div class="finalBody">
-        <h1>Comunicate con nosotros</h1>
-        <p>Escribenos y nuestros profesionales solucionaran tu problema en tan solo un momento!</p>
-        <div class="contBtn">
-            <button id="btnIngresar" onclick="window.location.href = '/Login/'">Ingresar</button>
+    <div style="background-color: #f8f9fa; padding: 3rem 0;">
+        <div class="container text-center">
+            <h2 class="text-purple fw-bold mb-3">Comunícate con nosotros</h2>
+            <p class="lead mb-4">Escríbenos y nuestros profesionales solucionarán tu problema en tan solo un momento!</p>
+            <a href="/Login/" class="btn btn-purple btn-lg px-4">
+                <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+            </a>
         </div>
     </div>
 {% endblock %}
