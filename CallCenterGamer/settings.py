@@ -33,9 +33,7 @@ if not DEBUG and SECRET_KEY == "insecure-development-key-change-before-deploying
 
 # SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
-    if host.strip()
+    "*"
 ]
 
 
