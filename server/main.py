@@ -2,25 +2,11 @@ import csv
 from typing import Any
 
 from fastapi import FastAPI
-from pydantic.main import BaseModel
 
 from paginador import paginador
 
-# Show_Id,Category,Title,Director,Cast,Country,Release_Date,Rating,Duration,Type,Description
 
-# MODELO DATABASE:
-class Movie(BaseModel):
-    show_id: str
-    categoria: str
-    titulo: str
-    director: str
-    reparto: str
-    pais: str
-    fecha_salida: str
-    calificacion: str
-    duracion: str
-    tipo: str
-    descripcion: str
+# Show_Id Category Title Director Cast Country Release_Date Rating Duration Type Description
 
 # JSON EJEMPLO 1 DATO:
 #
@@ -74,8 +60,6 @@ peliculas: list[dict[Any, Any]] = []
 series:    list[dict[Any, Any]] = []
 
 
-
-
 try:
     with open('database.csv') as csvFile:
         datos = list(csv.DictReader(f=csvFile))
@@ -103,14 +87,28 @@ def obtener_datos(index_pagina: int) -> dict[Any, Any]:
     resultados: dict[Any, Any] = paginador(datos, index_pagina)
     return resultados
 
+
 @app.get('/peliculas/{index_pagina}')
 def obtener_peliculas(index_pagina: int) -> dict[Any, Any]:
     resultados: dict[Any, Any] = paginador(peliculas, index_pagina)
     return resultados
+
 
 @app.get('/series/{index_pagina}')
 def obtener_series(index_pagina: int) -> dict[Any, Any]:
     resultados: dict[Any, Any] = paginador(series, index_pagina)
     return resultados
 
+
+
+# INICIAR SERVIDOR:
+# LINUX:    PYTHON3 MAIN.PY
+# WINDOWS:  PYTHON  MAIN.PY
+
+import uvicorn
+
+if __name__ == "__main__":
+    config = uvicorn.Config("main:app", port=5000, log_level="info")
+    server = uvicorn.Server(config)
+    server.run()
 

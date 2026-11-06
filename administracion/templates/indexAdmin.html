@@ -48,6 +48,12 @@
                                     <i class="fa-regular fa-trash-can"></i>
                                 </button>
                             </form>
+                            <form method="get" action="{% url 'respuestas' item.pk item.idPregunta %}" class="d-inline">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-success" type="submit" title="Responder">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     {% empty %}
