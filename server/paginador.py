@@ -1,6 +1,6 @@
 from typing import Any
 
-CANTIDAD_POR_PAGINA: int = 10
+CANTIDAD_POR_PAGINA: int = 8
 
 def paginador(datos: list[dict[Any, Any]], index_pagina: int) -> dict[Any, Any]:
     desde: int = CANTIDAD_POR_PAGINA * index_pagina

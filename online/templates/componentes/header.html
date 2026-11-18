@@ -2,115 +2,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title>{% block title %}Call Center Library{% endblock %}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<title>{% block title %}NETFLIX - Soporte{% endblock %}</title>
 
-    <!-- Bootstrap v5.3 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
-    <link href="{% static 'main.css'%}" rel="stylesheet">
-
-    {% block links %}{% endblock %}
+<!-- Bootstrap v5.3 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<link href="{% static 'main.css' %}" rel="stylesheet">
+{% block links %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% if user.is_authenticated %}{% if user.admin or user.tecnico %}/Administracion/{% else %}/Inicio/{% endif %}{% else %}/{% endif %}">
-            <i class="fa-brands fa-leanpub"></i>
-                CallCenterLibrary
-            </a>
+<nav class="navbar navbar-expand-lg navbar-dark">
+<div class="container-fluid">
+<a class="navbar-brand text-uppercase fw-bold" href="{% if user.is_authenticated %}{% if user.admin or user.tecnico %}/Administracion/{% else %}/Inicio/{% endif %}{% else %}/{% endif %}" style="color: #E50914; letter-spacing: 2px;">
+NETFLIX
+</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-items" aria-controls="navbar-items" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbar-items">
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+{% if user.is_authenticated %}
+  {% if user.admin or user.tecnico %}
+    <li class="nav-item">
+      <a class="nav-link" href="/Administracion/">Administración</a>
+    </li>
+    {% if user.admin %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'analytics_ia' %}">Analytics IA</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/GestionUsuarios/">Gestión de Usuarios</a>
+      </li>
+    {% endif %}
+  {% else %}
+    <li class="nav-item">
+      <a class="nav-link" href="/Inicio/">Inicio</a>
+    </li>
+  {% endif %}
+{% else %}
+  <li class="nav-item">
+    <a class="nav-link" href="/">Inicio</a>
+  </li>
+{% endif %}
+</ul>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-items" aria-controls="navbar-items" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+<ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+{% if user.is_authenticated %}
+  <li class="nav-item me-3">
+    <span class="text-light">
+      <i class="fas fa-user me-1" style="color: #E50914;"></i> {{ user.usuario }}
+    </span>
+    {% if user.admin %}
+      <span class="badge bg-danger ms-1">Admin</span>
+    {% elif user.tecnico %}
+      <span class="badge bg-info ms-1">Técnico</span>
+    {% endif %}
+  </li>
+  <li class="nav-item">
+    <form method="post" action="{% url 'Logout' %}" class="d-inline">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-light btn-sm">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </form>
+  </li>
+{% else %}
+  <li class="nav-item me-2">
+    <a class="nav-link text-light" href="/Login/"><i class="fas fa-sign-in-alt"></i> Ingresar</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link text-light" href="/Register/"><i class="fas fa-user-plus"></i> Registrarse</a>
+  </li>
+{% endif %}
+</ul>
+</div>
+</div>
+</nav>
 
-            <div class="collapse navbar-collapse" id="navbar-items">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {% if user.is_authenticated %}
-                        {% if user.admin or user.tecnico %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Administracion/">Administración</a>
-                        </li>
-                        {% if user.admin %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'analytics_ia' %}">Analytics IA</a>
-                        </li>
-                        {% endif %}
-                        {% if user.admin %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/GestionUsuarios/">Gestión de Usuarios</a>
-                        </li>
-                        {% endif %}
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Inicio/">Inicio</a>
-                        </li>
-                        {% endif %}
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/">Inicio</a>
-                        </li>
-                    {% endif %}
-                </ul>
+<main>
+{% block content %}
+{% endblock %}
+</main>
 
-                {% if user.is_authenticated %}
-                    <span class="text-white me-2">
-                        <i class="fas fa-user me-1"></i> {{ user.usuario }}
-                    </span>
-                    {% if user.admin %}
-                        <span class="badge bg-danger me-2">Admin</span>
-                    {% elif user.tecnico %}
-                        <span class="badge bg-info me-2">Técnico</span>
-                    {% endif %}
-                {% endif %}
+<footer class="site-footer">
+<div class="footer-content">
+<section class="footer-section">
+<h2>Call Center Netflix</h2>
+<p>Estamos aquí para ayudarte en todo momento con tus consultas y soporte técnico.</p>
+</section>
+<section class="footer-section">
+<h2>Visítanos</h2>
+<p>Av. Américo Vespucio 974, Maipú, Región Metropolitana</p>
+</section>
+</div>
+<div class="footer-copyright">
+<p>© 2026 Call Center Netflix. Todos los derechos reservados.</p>
+</div>
+</footer>
 
-                <ul class="navbar-nav mb-2 mb-lg-0">
-
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <form method="post" action="{% url 'Logout' %}" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-link nav-link">
-                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                                </button>
-                            </form>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Login/"><i class="fas fa-sign-in-alt"></i> Ingresar</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Register/"><i class="fas fa-user-plus"></i> Registrarse</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
-
-    <footer class="site-footer">
-        <div class="footer-content">
-            <section class="footer-section">
-                <h2>Contacto</h2>
-                <p>Instagram</p>
-                <p>Facebook</p>
-            </section>
-            <section class="footer-section">
-                <h2>Ubicación</h2>
-                <p>Av. Américo Vespucio 974, Maipú, Región Metropolitana</p>
-            </section>
-            <p class="footer-copyright">© 2026 Call Center Library. Todos los derechos reservados.</p>
-        </div>
-    </footer>
-
-    {% block js %}{% endblock %}
+{% block js %}{% endblock %}
 </body>
 </html>

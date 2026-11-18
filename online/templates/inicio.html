@@ -8,6 +8,74 @@
 
 {% block content %}
 
+<div class="container-fluid px-4 my-4">
+    <!-- Título de Tendencias -->
+    <h3 class="text-danger mb-4 fw-bold">Tendencias actuales en películas</h3>
+
+    <!-- Fila de Tarjetas Estilo Netflix (4 columnas x 2 filas = 8 por página) -->
+    <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
+        {% for pelicula in paginacion.resultados %}
+            <div class="col">
+                <div class="card bg-dark text-white h-100 border-secondary shadow" style="border-radius: 8px; overflow: hidden;">
+                    <div class="card-body d-flex flex-column justify-content-between p-3">
+                        <div>
+                            <!-- Insignia y Año con espacio controlado para que no se encimen -->
+                            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
+                                <span class="badge bg-danger text-uppercase px-2 py-1" style="font-size: 0.65rem; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    {{ pelicula.type_show|default:"Película" }}
+                                </span>
+                                <span class="text-muted" style="font-size: 0.75rem;">{{ pelicula.release_date|default:"2026" }}</span>
+                            </div>
+                            
+                            <!-- Título de la película -->
+                            <h5 class="card-title text-white fw-bold mb-2 text-truncate" style="font-size: 1.05rem;" title="{{ pelicula.title }}">
+                                {{ pelicula.title }}
+                            </h5>
+                            
+                            <!-- Descripción recortada -->
+                            <p class="card-text text-muted small mb-3" style="font-size: 0.82rem; line-height: 1.3;">
+                                {{ pelicula.description|default:"Sin descripción disponible."|truncatechars:90 }}
+                            </p>
+                        </div>
+                        
+                        <!-- Director / Creador -->
+                        <div class="pt-2 border-top border-secondary">
+                            <span class="text-danger small fw-semibold text-truncate d-block" style="font-size: 0.78rem;">
+                                🎬 {{ pelicula.director|default:"Netflix Original" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="p-4 bg-dark border border-secondary rounded-3 d-inline-block">
+                    <p class="text-light fs-5 mb-0">No hay películas disponibles en el catálogo.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginador con estilo rojo y profesional -->
+    <div class="d-flex justify-content-between align-items-center mt-4 px-2">
+        {% if paginacion.hay_anterior %}
+            <a href="?page={{ paginacion.pagina|add:'-1' }}" class="btn btn-outline-danger px-4">Anterior</a>
+        {% else %}
+            <button class="btn btn-outline-danger px-4" disabled>Anterior</button>
+        {% endif %}
+
+        <span class="text-danger fw-bold fs-5">Página {{ paginacion.pagina|add:1 }} de {{ paginacion.cantidad_total }}</span>
+
+        {% if paginacion.hay_siguiente %}
+            <a href="?page={{ paginacion.pagina|add:'1' }}" class="btn btn-danger px-4">Siguiente</a>
+        {% else %}
+            <button class="btn btn-outline-danger px-4" disabled>Siguiente</button>
+        {% endif %}
+    </div>
+</div>
+
+<hr class="border-secondary my-5">
+
 <div class="container-fluid py-4">
     <div class="row g-4">
         <div class="col-lg-7">
@@ -40,11 +108,11 @@
 
             <div class="ai-assistant p-4 mb-4">
                 <h4 class="mb-3">
-                    <i class="fas fa-robot me-2"></i> Asistente Virtual IA
+                    <i class="fas fa-robot me-2"></i> CineFlix IA
                 </h4>
                 <form method="get" action="" class="mb-3">
                     <div class="input-group">
-                        <input type="text" class="form-control" name="buscar_ayuda" placeholder="¿En qué puedo ayudarte? Ej: Recomendaciones de libros, dudas de literatura..."
+                        <input type="text" class="form-control" name="buscar_ayuda" placeholder="¿En qué puedo ayudarte? Ej: Recomendaciones, Dudas, Sugerencias..."
                                value="{{ request.GET.buscar_ayuda|default:'' }}">
                         <button type="submit" class="btn btn-dark text-white buscar">
                             <i class="fas fa-search me-2"></i>Buscar
@@ -52,7 +120,7 @@
                     </div>
                 </form>
                 <p class="mb-3 small">
-                    Nuestra IA puede ayudarte con problemas de recomendaciones, dudas, análisis y más.
+                    Nuestra IA de NETFLIX puede ayudarte con problemas, recomendaciones, dudas y más.
                 </p>
 
                 <div class="border-top border-light pt-3 small">
@@ -69,7 +137,7 @@
                         <i class="fas fa-user-shield me-2"></i> Política de Privacidad del Uso de IA
                     </h4>
                     <p>
-                        En Call Center Library nos tomamos en serio tu privacidad. Al utilizar nuestro Asistente Virtual basado en Inteligencia Artificial:
+                        En CineFlix IA nos tomamos en serio tu privacidad. Al utilizar nuestro Asistente Virtual basado en Inteligencia Artificial:
                     </p>
                     <ul>
                         <li>Tus mensajes se procesan exclusivamente para generar soluciones y recomendaciones técnicas.</li>
@@ -92,7 +160,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="alert" style="background: linear-gradient(90deg, #f3f0ff 0%, #e9ecef 100%); border-left: 4px solid #6f42c1;">
+                    <div class="alert" style="background: linear-gradient(90deg, #000000 0%, #ff0b0b 100%); border-left: 4px solid #e50914;">
                         <div class="d-flex align-items-center mb-2">
                             <i class="fas fa-robot text-purple me-2"></i>
                             <strong class="text-purple">Respuesta Automática:</strong>
@@ -105,11 +173,11 @@
                         <i class="fas fa-star text-warning me-2"></i> Preguntas Similares Resueltas:
                     </h6>
                     {% for rec in sugerencias_ia.recomendaciones %}
-                    <div class="card mb-3" style="border-left: 3px solid #6f42c1;">
+                    <div class="card mb-3" style="border-left: 3px solid #e50914;">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <strong class="text-purple">{{ rec.pregunta_similar }}</strong>
-                                <span class="badge" style="background-color: #6f42c1;">Similitud: {{ rec.similitud }}</span>
+                                <span class="badge" style="background-color: #e50914;">Similitud: {{ rec.similitud }}</span>
                             </div>
                             <p class="mb-2">{{ rec.respuesta }}</p>
                             {% if rec.categoria %}
@@ -145,19 +213,20 @@
                         <div class="card mb-2 pregunta-card">
                             <div class="card-body py-2 px-3">
                                 <h6 class="text-purple mb-1">{{pregunta.Titulo}}</h6>
-                                <small class="text-muted">{{pregunta.Fecha_creacion}}</small>
+                                <small class="text-light">{{pregunta.Fecha_creacion}}</small>
                             </div>
                         </div>
                     </a>
                     {% endfor %}
                     {% if not Preguntas %}
-                    <p class="text-center text-muted py-3">No hay preguntas aún</p>
+                    <p class="text-center text-light py-3">No hay preguntas aún</p>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <script>
     window.onclick = function(event) {

@@ -3,6 +3,7 @@ import logging
 from django.core.cache import cache
 from openai import OpenAI, OpenAIError
 from unidecode import unidecode
+from .models import PeliculaNetflix
 
 # Configuración del logger para la app online
 logger = logging.getLogger(__name__)
@@ -33,12 +34,19 @@ class AsistenteIA:
             return respuesta_cacheada
 
         try:
+            from online.models import PeliculaNetflix
+            pelicula_encontrada = PeliculaNetflix.objects.filter(title__icontains=pregunta).first()
+
+            contexto_extra = ""
+            if pelicula_encontrada:
+                        contexto_extra = f"\nInformación oficial de la BD de Netflix: Título: {pelicula_encontrada.title}, Director: {pelicula_encontrada.director}, Descripción: {pelicula_encontrada.description}."
+
             prompt = f"""
-            Eres un asistente de libreria especializado en libros, series de libros y literatura popular.
+            Eres un asistente de Netflix especializado en peliculas y series.
 
             Contexto del historial: {historial_contexto}
 
-            Pregunta del usuario: {pregunta}
+            Pregunta del usuario: {pregunta}{contexto_extra} 
 
             Por favor, proporciona una respuesta útil, técnica pero comprensible.
             Si necesitas más información, pídela amablemente.
@@ -53,7 +61,7 @@ class AsistenteIA:
                 messages=[
                     {
                         "role": "system",
-                        "content": "Eres un experto en libros, series de libros y literatura popular.",
+                        "content": "Eres un experto en peliculas y series.",
                     },
                     {"role": "user", "content": prompt},
                 ],
@@ -125,3 +133,5 @@ class AsistenteIA:
         except OpenAIError as e:
             logger.error(f"[Error interno de OpenAI - clasificar_pregunta]: {e}")
             return "otros"
+
+        

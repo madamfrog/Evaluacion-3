@@ -1,127 +1,143 @@
 :root {
-    --bs-primary: #6f42c1;
-    --bs-primary-rgb: 111, 66, 193;
-    --bs-secondary: #764ba2;
-    --purple-accent: #673de6;
-    --purple-deep: #4E31E1;
-    --purple-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --bs-primary: #E50914;
+  --bs-primary-rgb: 229, 9, 20;
+  --bs-secondary: #b3b3b3;
+  --netflix-red: #E50914;
+  --netflix-black: #141414;
+  --netflix-darkgray: #181818;
 }
 
 body {
-    min-height: 100vh;
-    background-color: #f8f9fa;
-    display: flex;
-    flex-direction: column;
+  min-height: 100vh;
+  background-color: #141414 !important;
+  color: #ffffff !important;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 main {
-    flex: 1 0 auto;
-    width: 100%;
+  flex: 1 0 auto;
+  width: 100%;
 }
 
+/* Navbar estilo Netflix */
 .navbar {
-    background: linear-gradient(90deg, #4E31E1 0%, #6f42c1 100%) !important;
-    box-shadow: 0 2px 10px rgba(78, 49, 225, 0.3);
+  background-color: rgba(0, 0, 0, 0.9) !important;
+  border-bottom: 1px solid #222;
+  padding: 0.8rem 1.5rem;
 }
 
-.navbar-brand, .navbar-nav .nav-link {
-    color: white !important;
-    font-weight: 500;
+.navbar-brand {
+  color: #E50914 !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px;
+  font-size: 1.6rem;
 }
 
-.navbar-brand:hover, .navbar-nav .nav-link:hover {
-    color: #e0d7ff !important;
+.navbar-nav .nav-link {
+  color: #e5e5e5 !important;
+  font-weight: 500;
 }
 
-.navbar-toggler {
-    border-color: rgba(255,255,255,0.5);
+.navbar-nav .nav-link:hover {
+  color: #ffffff !important;
 }
 
-.navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+/* Tarjetas oscuras estilo Netflix */
+.card-purple, .card {
+  background-color: #181818 !important;
+  color: #ffffff !important;
+  border: 1px solid #333 !important;
+  border-radius: 8px !important;
 }
 
-.btn-purple {
-    background-color: var(--purple-accent);
-    border-color: var(--purple-accent);
-    color: white;
-    box-shadow: 0px 0px 8px 0px rgba(52, 32, 150, 0.7);
-}
-
-.btn-purple:hover {
-    background-color: var(--purple-deep);
-    border-color: var(--purple-deep);
-    color: white;
-    box-shadow: 0px 0px 12px 0px rgba(103, 61, 230, 0.8);
+.bg-purple, .card-header.bg-purple {
+  background-color: #181818 !important;
+  border-bottom: 1px solid #333 !important;
+  color: #E50914 !important;
 }
 
 .text-purple {
-    color: var(--purple-deep) !important;
+  color: #E50914 !important;
 }
 
-.bg-purple {
-    background-color: var(--purple-deep) !important;
+/* Botones personalizados */
+.btn-purple, .btn-danger {
+  background-color: #E50914 !important;
+  border-color: #E50914 !important;
+  color: #ffffff !important;
+  font-weight: bold;
+  border-radius: 4px;
 }
 
-.border-purple {
-    border-color: var(--purple-deep) !important;
+.btn-purple:hover, .btn-danger:hover {
+  background-color: #b80710 !important;
+  border-color: #b80710 !important;
 }
 
-.card-purple {
-    -- border: 1px solid var(--purple-deep);
-    box-shadow: 0px 0px 5px 2px rgba(78, 49, 225, 0.3);
-    border-radius: 8px;
+/* Formularios adaptados al modo oscuro */
+.form-control {
+  background-color: #222 !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
 }
 
-
-.table-purple thead {
-    background-color: var(--purple-deep);
-    color: white;
+.form-control:focus {
+  background-color: #222 !important;
+  color: #fff !important;
+  border-color: #E50914 !important;
+  box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.25);
 }
 
+/* Footer estilo Netflix */
 .site-footer {
-    background: linear-gradient(120deg, #14213d 0%, #1c3154 100%);
-    color: #f4f7fb;
-    padding: 2rem 0;
-    margin-top: auto;
-    border-top: 4px solid #6f42c1;
+  background-color: #000 !important;
+  color: #b3b3b3;
+  padding: 3rem 0;
+  border-top: 1px solid #222;
+  margin-top: auto;
 }
 
 .footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
 }
 
 .footer-section h2 {
-    color: #a78bfa;
-    font-size: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
 }
 
 .footer-section p {
-    margin: 0.25rem 0;
-    font-size: 0.875rem;
+  margin: 0.25rem 0;
+  font-size: 0.85rem;
+  color: #b3b3b3;
 }
 
 .footer-copyright {
-    grid-column: 1 / -1;
-    text-align: center;
-    color: #c5d1e1;
-    font-size: 0.75rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #757575;
+  font-size: 0.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #222;
+}
+/* Forzar que los textos de ayuda (placeholders) dentro de los inputs sean blancos o grises claros y legibles */
+input::placeholder,
+textarea::placeholder {
+    color: #b3b3b3 !important; /* Gris claro tipo Netflix */
+    opacity: 1 !important;
 }
 
-@media (max-width: 768px) {
-    .footer-content {
-	grid-template-columns: 1fr;
-	text-align: center;
-    }
-}
+/* Por si el navegador usa versiones antiguas de prefijos */
+input::-webkit-input-placeholder { color: #b3b3b3 !important; }
+input::-moz-placeholder { color: #b3b3b3 !important; }
+input:-ms-input-placeholder { color: #b3b3b3 !important; }
