@@ -1,98 +1,79 @@
 {% extends "componentes/header.html" %}
 {% load static %}
-
-{% block title %}Gestión de Usuarios - Call Center Library{% endblock %}
-
+{% block title %} Gestión de Usuarios - Netflix Admin {% endblock %}
 {% block content %}
 <div class="container py-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h1 class="text-center text-purple"><i class="fas fa-users me-2"></i>Gestión de Usuarios</h1>
-        </div>
-    </div>
+<div class="row mb-4">
+<div class="col">
+<h1 class="text-center fw-bold" style="color: #E50914;"><i class="fas fa-users me-2"></i>Gestión de Usuarios</h1>
+</div>
+</div>
+<div class="card card-purple shadow-lg">
+<div class="card-body p-0">
+<div class="table-responsive">
+<table class="table table-dark table-striped table-hover mb-0 align-middle">
+<thead>
+<tr style="border-bottom: 2px solid #333;">
+<th scope="col" class="ps-3">ID</th>
+<th scope="col">Usuario</th>
+<th scope="col">Correo</th>
+<th scope="col">Rut</th>
+<th scope="col" class="text-center">Activo</th>
+<th scope="col" class="text-center">Admin</th>
+<th scope="col" class="text-center">Técnico</th>
+<th scope="col">Última Conexión</th>
+<th scope="col" class="text-center pe-3">Acciones</th>
+</tr>
+</thead>
+<tbody>
+{% for Usuario in Usuarios %}
+<tr>
+<th scope="row" class="ps-3">{{ Usuario.id }}</th>
+<td>
+{{ Usuario.usuario }}
+<form id="user-change-{{ Usuario.id }}" method="post" action="{% url 'gestion_usuarios' %}">
+{% csrf_token %}
+<input type="hidden" value="{{ Usuario.id }}" name="Userid">
+</form>
+</td>
+<td>{{ Usuario.correo }}</td>
+<td>{{ Usuario.rut }}</td>
 
-    <div class="card card-purple">
-        <div class="card-body p-0">
-            <table class="table table-striped table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Usuario</th>
-                        <th scope="col">Correo</th>
-                        <th scope="col">Rut</th>
-                        <th scope="col" class="text-center">Activo</th>
-                        <th scope="col" class="text-center">Admin</th>
-                        <th scope="col" class="text-center">Técnico</th>
-                        <th scope="col">Última Conexión</th>
-                        <th scope="col" class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for Usuario in Usuarios %}
-                    <tr>
-                        <th scope="row">{{ Usuario.id }}</th>
-                        <td>
-                            {{ Usuario.usuario }}
-                            <form id="user-change-{{ Usuario.id }}" method="post" action="{% url 'gestion_usuarios' %}">
-                                {% csrf_token %}
-                                <input type="hidden" value="{{ Usuario.id }}" name="Userid">
-                            </form>
-                        </td>
-                        <td>{{ Usuario.correo }}</td>
-                        <td>{{ Usuario.rut }}</td>
-
-                        {% if Usuario.admin %}
-                        <td class="text-center">
-                            <input class="form-check-input" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %} disabled/>
-                        </td>
-                        <td class="text-center">
-                            <input class="form-check-input" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %} disabled/>
-                        </td>
-                        <td class="text-center">
-                            <input class="form-check-input" type="checkbox" name="tecnico" form="user-change-{{ Usuario.id }}" {% if Usuario.tecnico %}checked{% endif %} disabled/>
-                        </td>
-                        <td>{{ Usuario.last_login|date:"d/m/Y H:i" }}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-outline-secondary" type="submit" form="user-change-{{ Usuario.id }}" disabled title="No editable">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <form method="post" action="{% url 'eliminar_usuario' Usuario.id %}" onsubmit="return confirm('¿Estas seguro de borrar este usuario?')" class="d-inline">
-                                {% csrf_token %}
-                                <button class="btn btn-sm btn-outline-secondary" type="submit" disabled title="No eliminable">
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </button>
-                            </form>
-                        </td>
-                        {% else %}
-                        <td class="text-center">
-                            <input class="form-check-input" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %}/>
-                        </td>
-                        <td class="text-center">
-                            <input class="form-check-input" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %}/>
-                        </td>
-                        <td class="text-center">
-                            <input class="form-check-input" type="checkbox" name="tecnico" form="user-change-{{ Usuario.id }}" {% if Usuario.tecnico %}checked{% endif %}/>
-                        </td>
-                        <td>{{ Usuario.last_login|date:"d/m/Y H:i" }}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-outline-primary" type="submit" form="user-change-{{ Usuario.id }}" title="Guardar cambios">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <form method="post" action="{% url 'eliminar_usuario' Usuario.id %}" onsubmit="return confirm('¿Estas seguro de borrar este usuario?')" class="d-inline">
-                                {% csrf_token %}
-                                <button class="btn btn-sm btn-outline-danger" type="submit" title="Eliminar">
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </button>
-                            </form>
-                        </td>
-                        {% endif %}
-                    </tr>
-                {% empty %}
-                    <tr><td colspan="9" class="text-center py-4 text-muted">No hay usuarios para mostrar.</td></tr>
-                {% endfor %}
-                </tbody>
-              </table>
-        </div>
-    </div>
+{% if Usuario.admin %}
+<td class="text-center"><input class="form-check-input" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %} disabled/></td>
+<td class="text-center"><input class="form-check-input" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %} disabled/></td>
+<td class="text-center"><input class="form-check-input" type="checkbox" name="tecnico" form="user-change-{{ Usuario.id }}" {% if Usuario.tecnico %}checked{% endif %} disabled/></td>
+<td class="text-muted small">{{ Usuario.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</td>
+<td class="text-center pe-3">
+<span class="badge bg-secondary">Protegido</span>
+</td>
+{% else %}
+<td class="text-center"><input class="form-check-input" type="checkbox" name="activo" form="user-change-{{ Usuario.id }}" {% if Usuario.activo %}checked{% endif %}/></td>
+<td class="text-center"><input class="form-check-input" type="checkbox" name="admin" form="user-change-{{ Usuario.id }}" {% if Usuario.admin %}checked{% endif %}/></td>
+<td class="text-center"><input class="form-check-input" type="checkbox" name="tecnico" form="user-change-{{ Usuario.id }}" {% if Usuario.tecnico %}checked{% endif %}/></td>
+<td class="text-muted small">{{ Usuario.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</td>
+<td class="text-center pe-3">
+<div class="d-flex justify-content-center gap-1">
+<button class="btn btn-sm btn-outline-light" type="submit" form="user-change-{{ Usuario.id }}" title="Guardar cambios">
+<i class="fa-solid fa-pen text-warning"></i>
+</button>
+<form method="post" action="{% url 'eliminar_usuario' Usuario.id %}" onsubmit="return confirm('¿Estás seguro de borrar este usuario?')" class="d-inline">
+{% csrf_token %}
+<button class="btn btn-sm btn-outline-light" type="submit" title="Eliminar">
+<i class="fa-regular fa-trash-can text-danger"></i>
+</button>
+</form>
+</div>
+</td>
+{% endif %}
+</tr>
+{% empty %}
+<tr><td colspan="9" class="text-center py-4 text-muted">No hay usuarios para mostrar.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 {% endblock %}

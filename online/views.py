@@ -3,6 +3,12 @@ import logging
 from typing import Any
 from uuid import UUID, uuid4
 
+from django.db.models import Q
+from .models import Preguntas
+from .models import PeliculaNetflix
+from server.paginador import paginador
+from django.shortcuts import render
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -38,6 +44,36 @@ def Index(request: HttpRequest) -> HttpResponse:
 
     return render(request, "index.html")
 
+
+def inicio_view(request):
+    # Esto aparecerá en tu terminal en cuanto recargues la web
+    total_en_db = PeliculaNetflix.objects.count()
+    print("--> ¡FUNCION INICIO_VIEW EJECUTANDOSE! Películas en DB:", total_en_db)
+
+    # Obtenemos todas las películas y las pasamos al paginador
+    lista_peliculas = list(PeliculaNetflix.objects.all().values())
+    page = int(request.GET.get('page', 0))
+    datos_paginados = paginador(lista_peliculas, index_pagina=page)
+    
+    return render(request, 'inicio.html', {
+        'paginacion': datos_paginados
+    })
+
+
+def buscar_pelicula_view(request):
+    query = request.GET.get('buscar_ayuda', '') # O el nombre del input de tu formulario de búsqueda
+    
+    resultados = []
+    if query:
+        # Busca tanto en el título como en la descripción de las películas de Netflix
+        resultados = PeliculaNetflix.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
+        
+    return render(request, 'tu_template_de_resultados.html', {
+        'resultados': resultados, 
+        'query': query
+    })
 
 @require_POST
 @login_required

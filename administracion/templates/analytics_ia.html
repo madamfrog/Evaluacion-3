@@ -1,79 +1,74 @@
 {% extends "componentes/header.html" %}
 {% load static %}
-
-{% block title %}Analytics con IA - Call Center Library{% endblock %}
-
+{% block title %} Analytics con IA - Netflix Admin {% endblock %}
 {% block content %}
 <div class="container py-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h1 class="text-center text-purple"><i class="fas fa-brain me-2"></i>Analytics con Inteligencia Artificial</h1>
-        </div>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card card-purple text-center h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-purple"><i class="fas fa-chart-bar me-2"></i>Preguntas este Mes</h5>
-                    <h2 class="text-purple fw-bold">{{ analytics_data.total_preguntas_mes }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-purple text-center h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-purple"><i class="fas fa-clock me-2"></i>Preguntas sin Respuesta</h5>
-                    <h2 class="text-warning fw-bold">{{ analytics_data.preguntas_sin_respuesta }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-purple text-center h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-purple"><i class="fas fa-bolt me-2"></i>Tiempo Promedio Respuesta</h5>
-                    <h2 class="text-success fw-bold">{{ analytics_data.tiempo_promedio_respuesta }}</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-lg-6">
-            <div class="card card-purple h-100">
-                <div class="card-header bg-purple text-white">
-                    <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Tendencias por Categoría (IA)</h5>
-                </div>
-                <div class="card-body">
-                    {% for categoria, cantidad in analytics_data.categorias_tendencia.items %}
-                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background-color: #f3f0ff;">
-                        <span class="fw-bold text-purple">{{ categoria|title }}</span>
-                        <span class="badge" style="background-color: #6f42c1;">{{ cantidad }}</span>
-                    </div>
-                    {% empty %}
-                    <p class="text-muted text-center">No hay datos disponibles</p>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card card-purple h-100">
-                <div class="card-header bg-purple text-white">
-                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Usuarios Más Activos</h5>
-                </div>
-                <div class="card-body">
-                    {% for usuario in analytics_data.usuarios_activos %}
-                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background-color: #f3f0ff;">
-                        <span class="fw-bold text-purple">{{ usuario.usuario }}</span>
-                        <span class="badge bg-success">{{ usuario.num_preguntas }} preguntas</span>
-                    </div>
-                    {% empty %}
-                    <p class="text-muted text-center">No hay datos disponibles</p>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="row mb-4">
+<div class="col">
+<h1 class="text-center fw-bold" style="color: #E50914;"><i class="fas fa-brain me-2"></i>Analytics con Inteligencia Artificial</h1>
+</div>
+</div>
+<div class="row g-4 mb-4">
+<div class="col-md-4">
+<div class="card card-purple text-center h-100 shadow">
+<div class="card-body">
+<h5 class="card-title text-light"><i class="fas fa-chart-bar me-2 text-danger"></i>Preguntas este Mes</h5>
+<h2 class="fw-bold mt-3" style="color: #fff;">{{ analytics_data.total_preguntas_mes }}</h2>
+</div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="card card-purple text-center h-100 shadow">
+<div class="card-body">
+<h5 class="card-title text-light"><i class="fas fa-clock me-2 text-warning"></i>Sin Respuesta</h5>
+<h2 class="text-warning fw-bold mt-3">{{ analytics_data.preguntas_sin_respuesta }}</h2>
+</div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="card card-purple text-center h-100 shadow">
+<div class="card-body">
+<h5 class="card-title text-light"><i class="fas fa-bolt me-2 text-success"></i>Tiempo Promedio</h5>
+<h2 class="text-success fw-bold mt-3" style="font-size: 1.5rem;">{{ analytics_data.tiempo_promedio_respuesta }}</h2>
+</div>
+</div>
+</div>
+</div>
+<div class="row g-4">
+<div class="col-lg-6">
+<div class="card card-purple h-100 shadow">
+<div class="card-header bg-purple text-white">
+<h5 class="mb-0"><i class="fas fa-tags me-2 text-danger"></i>Tendencias por Categoría (IA)</h5>
+</div>
+<div class="card-body">
+{% for categoria, cantidad in analytics_data.categorias_tendencia.items %}
+<div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background-color: #222; border: 1px solid #333;">
+<span class="fw-bold text-light">{{ categoria|title }}</span>
+<span class="badge bg-danger">{{ cantidad }}</span>
+</div>
+{% empty %}
+<p class="text-light text-center py-3">No hay datos disponibles</p>
+{% endfor %}
+</div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="card card-purple h-100 shadow">
+<div class="card-header bg-purple text-white">
+<h5 class="mb-0"><i class="fas fa-users me-2 text-danger"></i>Usuarios Más Activos</h5>
+</div>
+<div class="card-body">
+{% for usuario in analytics_data.usuarios_activos %}
+<div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background-color: #222; border: 1px solid #333;">
+<span class="fw-bold text-light">{{ usuario.usuario }}</span>
+<span class="badge bg-success">{{ usuario.num_preguntas }} preguntas</span>
+</div>
+{% empty %}
+<p class="text-light text-center py-3">No hay datos disponibles</p>
+{% endfor %}
+</div>
+</div>
+</div>
+</div>
 </div>
 {% endblock %}

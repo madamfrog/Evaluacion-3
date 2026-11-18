@@ -143,7 +143,6 @@ def ModificarPregunta(request: HttpRequest, idPregunta: int) -> HttpResponse:
     """
     Vista para modificar preguntas con asistencia de IA
     """
-
     usuario: object = request.user
     assert isinstance(usuario, Usuario)
 
@@ -210,58 +209,45 @@ def ModificarPregunta(request: HttpRequest, idPregunta: int) -> HttpResponse:
 
     if request.method == "POST":
         response_post: dict[Any, Any] = request.POST.dict()
-
-        # FELIPE: CAMBIE LA LOGICA PARA AGREGAR USUARIO Y FECHA DE CREACION (POR DEFECTO EN EL POST ERA '' Y DABA INVALIDO EN IS_VALID)
+        
+        # Mantenemos el usuario y la fecha original
         response_post.update(
             {"Usuario": pregunta.Usuario, "Fecha_creacion": pregunta.Fecha_creacion}
         )
-
+        
         formulario_preguntas = PreguntasForm(response_post, instance=pregunta)
-
+        
         if formulario_preguntas.is_valid():
-            # 🔥 INTEGRACIÓN DE IA: Re-clasificar después de modificación
+            # Integración de IA opcional o re-clasificación
+            try:
+                nueva_categoria: str = asistente_ia.clasificar_pregunta(response_post["Pregunta"])
+                logger.info(f"Pregunta modificada - Nueva categoria IA: {nueva_categoria}")
+            except Exception as e:
+                pass
 
-            nueva_categoria: str = asistente_ia.clasificar_pregunta(
-                response_post["Pregunta"]
-            )
-
-            # Aquí podrías guardar la categoría si agregas el campo al modelo
-            logger.info(
-                f"Pregunta modificada - Nueva categoría IA: {nueva_categoria}"
-            )
-
-            formulario_preguntas = PreguntasForm(response_post, instance=pregunta)
             formulario_preguntas.save()
-
             messages.success(request, "Pregunta modificada correctamente.")
             return redirect("/Administracion/")
         else:
+            # AQUÍ ESTABA EL DETALLE: Si no es válido, pasamos el formulario con los errores de vuelta al HTML
             messages.error(request, "Error en el formulario. Verifica los datos.")
-
-    resultado_categoria_ia: str
-    resultado_preguntas_similares: list[Any]
-
-    if "categoria_ia" in locals():
-        resultado_categoria_ia = categoria_ia
-    else:
-        resultado_categoria_ia = "No disponible"
-
-    if "preguntas_similares" in locals():
-        resultado_preguntas_similares = preguntas_similares
-    else:
-        resultado_preguntas_similares = []
-
-    return render(
-        request       = request,
-        template_name = "ModificarPregunta.html",
-        context       = {
-            "form": form,
-            "pregunta": pregunta,
-            "sugerencias_ia": sugerencias_ia,
-            "categoria_ia": resultado_categoria_ia,
-            "preguntas_similares": resultado_preguntas_similares,
-        },
-    )
+            
+            # Definimos variables vacías para que el render de abajo no falle por variables no definidas
+            sugerencias_ia = []
+            resultado_categoria_ia = "No disponible"
+            resultado_preguntas_similares = []
+            
+            return render(
+                request, 
+                "ModificarPregunta.html",
+                {
+                    "form": formulario_preguntas, # <- Aquí enviamos el formulario con los errores actuales
+                    "pregunta": pregunta,
+                    "sugerencias_ia": sugerencias_ia,
+                    "categoria_ia": resultado_categoria_ia,
+                    "preguntas_similares": resultado_preguntas_similares,
+                }
+            )
 
 
 @login_required

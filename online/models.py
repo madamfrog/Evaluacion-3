@@ -137,3 +137,19 @@ class Respuesta(models.Model):
 
     def __str__(self):
         return f"{self.idRespuesta} - {self.Respuesta[:20]}"
+
+class PeliculaNetflix(models.Model):
+    show_id = models.CharField(max_length=20, unique=True)
+    category = models.CharField(max_length=50, blank=True, null=True)
+    title = models.CharField(max_length=255)
+    director = models.CharField(max_length=255, blank=True, null=True)
+    cast = models.TextField(blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    release_date = models.CharField(max_length=50, blank=True, null=True)
+    rating = models.CharField(max_length=20, blank=True, null=True)
+    duration = models.CharField(max_length=50, blank=True, null=True)
+    type_show = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.title

@@ -1,44 +1,53 @@
 {% extends "componentes/header.html" %}
 {% load static %}
-
-{% block title %}Modificar Pregunta - Call Center Library{% endblock %}
-
+{% block title %} Modificar Pregunta - Netflix Admin {% endblock %}
 {% block content %}
 <div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card card-purple">
-                <div class="card-header bg-purple text-white text-center">
-                    <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Modificar Pregunta</h4>
-                </div>
-                <div class="card-body">
-                    <form method="post" action="{% url 'modificar_pregunta' pregunta.idPregunta %}">
-                        {% for field in form %}
-                            {% if field.is_hidden %}
-                                {{ field }}
-                            {% else %}
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold text-purple" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field }}
-                                {% if field.errors %}
-                                    <div class="text-danger small">{{ field.errors }}</div>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-                        {% endfor %}
-                        {% csrf_token %}
-                        <div class="d-flex gap-2 mt-3">
-                            <button type="submit" class="btn btn-purple">
-                                <i class="fas fa-save me-2"></i>Modificar pregunta
-                            </button>
-                            <a href="/Administracion/" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Cancelar
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<div class="row justify-content-center">
+<div class="col-lg-8">
+<div class="card card-purple shadow-lg">
+<div class="card-header bg-purple text-white text-center">
+<h4 class="mb-0" style="color: #E50914;"><i class="fas fa-edit me-2"></i>Modificar Pregunta</h4>
+</div>
+<div class="card-body p-4">
+
+<form method="post" action="{% url 'modificar_pregunta' pregunta.idPregunta %}">
+{% csrf_token %}
+
+<!--{% if form.errors %}
+    <div class="alert alert-danger mb-3 text-white bg-dark border-danger">
+        <strong>Por favor corrige los siguientes errores:</strong>
+        {{ form.errors }}
     </div>
+{% endif %}-->
+
+{% for field in form %}
+    {% if field.is_hidden %}
+        {{ field }}
+    {% else %}
+        <div class="mb-3">
+            <label class="form-label fw-semibold text-light" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="text-danger small mt-1">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}
+
+
+<div class="d-flex gap-2 mt-4">
+<button type="submit" class="btn btn-danger flex-grow-1 py-2">
+<i class="fas fa-save me-2"></i>Guardar Cambios
+</button>
+<a href="/Administracion/" class="btn btn-outline-light px-4 py-2">
+<i class="fas fa-arrow-left me-2"></i>Cancelar
+</a>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
 </div>
 {% endblock %}
