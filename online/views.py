@@ -45,21 +45,6 @@ def Index(request: HttpRequest) -> HttpResponse:
     return render(request, "index.html")
 
 
-def inicio_view(request):
-    # Esto aparecerá en tu terminal en cuanto recargues la web
-    total_en_db = PeliculaNetflix.objects.count()
-    print("--> ¡FUNCION INICIO_VIEW EJECUTANDOSE! Películas en DB:", total_en_db)
-
-    # Obtenemos todas las películas y las pasamos al paginador
-    lista_peliculas = list(PeliculaNetflix.objects.all().values())
-    page = int(request.GET.get('page', 0))
-    datos_paginados = paginador(lista_peliculas, index_pagina=page)
-    
-    return render(request, 'inicio.html', {
-        'paginacion': datos_paginados
-    })
-
-
 def buscar_pelicula_view(request):
     query = request.GET.get('buscar_ayuda', '') # O el nombre del input de tu formulario de búsqueda
     
@@ -85,51 +70,48 @@ def logout_view(request: HttpRequest) -> HttpResponse:
     return redirect("Login")
 
 
-
 @login_required
 def Inicio(request: HttpRequest) -> HttpResponse:
     """
-    Vista del panel de usuario(inicio) - Optimizado
+    Vista del panel de usuario(inicio) - Optimizado con Catálogo de Netflix
     """
+    from server.paginador import paginador
+    lista_peliculas = list(PeliculaNetflix.objects.all().values())
+    print("TOTAL DE PELÍCULAS EN LA BD:", len(lista_peliculas))
+    page = int(request.GET.get('page', 0))
+    datos_paginados = paginador(lista_peliculas, index_pagina=page)
+
     usuario: object = request.user
-
+    
     assert isinstance(usuario, Usuario)
-
+    
     usuario_pk: Any | None = usuario.pk
-
+    
     usuario_logeado: Usuario = get_object_or_404(Usuario, id=request.user.pk)
-
+    
     if usuario_pk != usuario.pk:
         return redirect("/Inicio/")
-
-
+    
     # Optimización: Ordenar las preguntas por fecha de creación descendente
     preguntas = Preguntas.objects.filter(Usuario=usuario_logeado).order_by("-Fecha_creacion")
     hora_ahora = timezone.now()
-
-    formulario_preguntas: PreguntasForm = PreguntasForm(initial={"Usuario": usuario.pk, "Fecha_creacion": hora_ahora})
-
+    formulario_preguntas = PreguntasForm(initial={"Usuario": usuario.pk, "Fecha_creacion": hora_ahora})
+    
     if request.method == "POST":
         response_post: dict[Any, Any] = request.POST.dict()
         formulario_preguntas = PreguntasForm(response_post)
-
+        
         if formulario_preguntas.is_valid():
             # Clasificar con IA
             try:
                 asistente = AsistenteIA()
-                response_post["categoria"] = asistente.clasificar_pregunta(
+                response_post["categoria"] = asistente.clasificar_preguntas(
                     response_post["Pregunta"]
                 )
-
-                response_post["categoria"] = asistente.clasificar_pregunta(
-                    response_post["Pregunta"]
-                )
-
-
             except Exception as e:
                 logger.error("Error al clasificar categoría: %s", e)
                 response_post["categoria"] = "general"
-
+                
             logger.info(response_post)
             formulario_preguntas = PreguntasForm(response_post)
             formulario_preguntas.save()
@@ -138,35 +120,35 @@ def Inicio(request: HttpRequest) -> HttpResponse:
     query_ia: str | None = request.GET.get("buscar_ayuda", None)
     sugerencias_ia: dict[Any, Any] | None = None
 
-    # Guarda la búsqueda del asistente virtual
     if query_ia:
-        query_ia_formateado: str = query_ia.strip()
+        query_ia_formatceado: str = query_ia.strip()
         sugerencias_ia = {
-            "consulta_original": query_ia_formateado,
+            "consulta_original": query_ia_formatceado,
             "respuesta_automatica": "Lo sentimos, el asistente virtual no se encuentra disponible en este momento. Inténtalo más tarde.",
             "recomendaciones": [],
         }
-
+        
         logger.info("GENERANDO RESPUESTA AUTOMATICA")
-        respuesta_automatica: str = obtener_respuesta_ia(query_ia_formateado)
-
+        respuesta_automatica: str = obtener_respuesta_ia(query_ia_formatceado)
+        
         logger.info("GENERANDO RECOMENDACIONES")
-        recomendaciones_ia: list[str] = obtener_recomendaciones_ia(query_ia_formateado)
-
+        recomendaciones_ia: list[str] = obtener_recomendaciones_ia(query_ia_formatceado)
+        
         sugerencias_ia = {
-            "consulta_original": query_ia_formateado,
+            "consulta_original": query_ia_formatceado,
             "respuesta_automatica": respuesta_automatica,
             "recomendaciones": recomendaciones_ia,
         }
-
+        print("TOTAL DE PELÍCULAS EN LA BD:", PeliculaNetflix.objects.count())
 
     return render(
-        request       = request,
-        template_name = "inicio.html",
-        context       = {
+        request,
+        "inicio.html",
+        context = {
             "Preguntas": preguntas,
             "form": formulario_preguntas,
             "sugerencias_ia": sugerencias_ia,
+            "paginacion": datos_paginados, 
         },
     )
 
