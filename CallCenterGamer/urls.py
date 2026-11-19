@@ -6,7 +6,6 @@
 
 from django.contrib import admin
 from django.urls import path
-from online.views import inicio_view
 
 from administracion.views import (
     AnalyticsIA,
@@ -35,7 +34,7 @@ urlpatterns = [
     path("Login/", LoginView.as_view(), name="Login"),
     path("Register/", RegisterView.as_view(), name="Register"),
     path("Inicio/", Inicio, name="inicio"),
-    path('Inicio/', inicio_view, name='inicio'),
+
     # Usar vista personalizada para logout
     path("Logout/", logout_view, name="Logout"),
     path("Respuesta/<int:idUser>/<int:idPregunta>/", ViewRespuestas, name="respuestas"),
